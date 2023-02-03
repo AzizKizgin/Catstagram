@@ -1,17 +1,18 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {NativeBaseProvider} from 'native-base';
+import {Box, NativeBaseProvider} from 'native-base';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import theme from './theme';
 
 const queryClient = new QueryClient();
 
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <NativeBaseProvider>
-        <View>
+      <NativeBaseProvider theme={theme}>
+        <Box bg={'pink'}>
           <Text>App</Text>
-        </View>
+        </Box>
       </NativeBaseProvider>
     </QueryClientProvider>
   );
