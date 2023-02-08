@@ -12,6 +12,7 @@ const CommentButton = () => {
           name="ios-chatbox-outline"
           size="23"
           color="white"
+          marginTop={'xxs'}
         />
       </Box>
     </AnimatedPressable>
