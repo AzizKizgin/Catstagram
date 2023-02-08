@@ -6,7 +6,12 @@ const ShareButton = () => {
   return (
     <Pressable>
       <Box>
-        <Icon as={Feather} name="arrow-redo-outline" size="25" color="white" />
+        <Icon
+          as={Feather}
+          name="arrow-redo-outline"
+          size="25"
+          color="iconColor"
+        />
       </Box>
     </Pressable>
   );

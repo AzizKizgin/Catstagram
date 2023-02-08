@@ -7,7 +7,7 @@ const SaveButton = () => {
   return (
     <AnimatedPressable>
       <Box>
-        <Icon as={FontAwesome} name="bookmark-o" size="23" color="white" />
+        <Icon as={FontAwesome} name="bookmark-o" size="23" color="iconColor" />
       </Box>
     </AnimatedPressable>
   );

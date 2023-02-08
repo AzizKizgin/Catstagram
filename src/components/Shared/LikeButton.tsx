@@ -7,7 +7,7 @@ const LikeButton = () => {
   return (
     <AnimatedPressable>
       <Box>
-        <Icon as={AntDesign} name="like2" size="23" color="white" />
+        <Icon as={AntDesign} name="like2" size="23" color="iconColor" />
       </Box>
     </AnimatedPressable>
   );

@@ -11,7 +11,7 @@ const OptionButton = () => {
           as={MaterialCommunityIcons}
           name="dots-vertical"
           size="lg"
-          color="white"
+          color="iconColor"
         />
       </Box>
     </AnimatedPressable>
