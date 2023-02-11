@@ -34,6 +34,7 @@ const FormInput: FC<FormInputProps> = (props) => {
       _input={{
         paddingX: 'xs',
       }}
+      autoComplete="off"
     />
   );
 };
