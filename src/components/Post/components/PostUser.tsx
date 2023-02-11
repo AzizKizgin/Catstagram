@@ -11,7 +11,7 @@ const PostUser = () => {
       paddingX={'s'}
       paddingTop={'xs'}>
       <HStack space={'xs'} justifyContent={'center'} alignItems={'center'}>
-        <UserImage image={'https://picsum.photos/331'} />
+        <UserImage image={'https://picsum.photos/331'} size={'xs'} />
         <Text color={'white'}>User Name</Text>
       </HStack>
       <OptionButton />
