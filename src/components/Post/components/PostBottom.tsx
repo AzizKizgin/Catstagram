@@ -1,17 +1,20 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {FC} from 'react';
 import {HStack} from 'native-base';
 import LikeButton from '../../Shared/LikeButton';
 import CommentButton from '../../Shared/CommentButton';
 import ShareButton from '../../Shared/ShareButton';
 import SaveButton from '../../Shared/SaveButton';
 
-const PostBottom = () => {
+interface PostBottomProps {
+  onCommentPress: () => void;
+}
+const PostBottom: FC<PostBottomProps> = (props) => {
+  const {onCommentPress} = props;
   return (
     <HStack justifyContent={'space-between'} paddingX={'sm'} paddingY={'xs'}>
       <HStack space={'sm'}>
         <LikeButton />
-        <CommentButton />
+        <CommentButton onPress={onCommentPress} />
         <ShareButton />
       </HStack>
       <SaveButton />
@@ -20,5 +23,3 @@ const PostBottom = () => {
 };
 
 export default PostBottom;
-
-const styles = StyleSheet.create({});
