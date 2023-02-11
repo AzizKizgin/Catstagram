@@ -1,4 +1,4 @@
-import {Box, Button, VStack} from 'native-base';
+import {Box, Button, Text, VStack, Center, Pressable, Image} from 'native-base';
 import React, {useState} from 'react';
 import {Formik} from 'formik';
 import FormInput from './components/FormInput';
@@ -8,10 +8,12 @@ import {
   registerForm,
   loginValidate,
 } from './constants/AuthenticationConstants';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import Logo from '../../components/Shared/Logo';
 const Login = () => {
-  const {login} = useAuth();
+  const {login, user} = useAuth();
   const [errors, setErrors] = useState<any>(null);
-
+  const navigation = useNavigation<NavigationProp<AuthNavigationParamsList>>();
   return (
     <Box
       flex={1}
@@ -30,6 +32,7 @@ const Login = () => {
         }>
         {({handleChange, handleBlur, handleSubmit, values, errors}) => (
           <VStack space={'lg'}>
+            <Logo />
             <FormInput
               onChangeText={handleChange('email')}
               onBlur={handleBlur('email')}
@@ -46,12 +49,28 @@ const Login = () => {
               error={errors.password}
               iconName={inputIcons.password}
             />
-            <Button
-              onPress={() => handleSubmit()}
-              backgroundColor={'cyan'}
-              marginTop={'sm'}>
-              Login
-            </Button>
+            <VStack space={'xs'}>
+              <Button
+                onPress={() => handleSubmit()}
+                backgroundColor={'cyan'}
+                marginTop={'sm'}>
+                Login
+              </Button>
+              <Center>
+                <Pressable
+                  variant={'login'}
+                  onPress={() => navigation.navigate('ResetPassword')}>
+                  <Text color={'textDark'}>Forgot Password?</Text>
+                </Pressable>
+                <Pressable
+                  variant={'login'}
+                  onPress={() => navigation.navigate('Register')}>
+                  <Text color={'textDark'} marginTop={'xs'}>
+                    Don't have an account? Sign Up
+                  </Text>
+                </Pressable>
+              </Center>
+            </VStack>
           </VStack>
         )}
       </Formik>

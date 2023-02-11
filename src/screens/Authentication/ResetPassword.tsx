@@ -1,6 +1,7 @@
 import {Formik} from 'formik';
 import {Box, Button, VStack} from 'native-base';
 import React, {useState} from 'react';
+import Logo from '../../components/Shared/Logo';
 import {useAuth} from '../../context/AuthContext';
 import FormInput from './components/FormInput';
 import {
@@ -28,6 +29,7 @@ const ResetPassword = () => {
         }>
         {({handleChange, handleBlur, handleSubmit, values, errors}) => (
           <VStack space={'lg'}>
+            <Logo />
             <FormInput
               onChangeText={handleChange('email')}
               onBlur={handleBlur('email')}
@@ -40,7 +42,7 @@ const ResetPassword = () => {
               onPress={() => handleSubmit()}
               backgroundColor={'cyan'}
               marginTop={'sm'}>
-              Login
+              Send
             </Button>
           </VStack>
         )}

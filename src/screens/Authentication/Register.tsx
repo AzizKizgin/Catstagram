@@ -9,9 +9,12 @@ import {
   registerValidate,
 } from './constants/AuthenticationConstants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Logo from '../../components/Shared/Logo';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 const Register = () => {
   const {register} = useAuth();
   const [errors, setErrors] = useState<any>(null);
+  const navigation = useNavigation<NavigationProp<AuthNavigationParamsList>>();
 
   return (
     <Box
@@ -22,16 +25,20 @@ const Register = () => {
       <Formik
         initialValues={registerForm}
         validate={registerValidate}
-        onSubmit={(values) =>
+        onSubmit={(values, errors) => {
           register({
             email: values.email,
             password: values.password,
             userName: values.username,
             setErrors,
-          })
-        }>
+          });
+          if (!errors) {
+            navigation.navigate('Login');
+          }
+        }}>
         {({handleChange, handleBlur, handleSubmit, values, errors}) => (
           <VStack space={'lg'}>
+            <Logo />
             <FormInput
               onChangeText={handleChange('username')}
               onBlur={handleBlur('username')}
