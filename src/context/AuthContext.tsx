@@ -74,16 +74,14 @@ export const AuthProvider = ({children}: AuthContextProps) => {
     setErrors,
   }: RegisterProps) => {
     try {
-      const response = await auth()
+      await auth()
         .createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
           userCredential.user.updateProfile({
             displayName: userName,
           });
+          userCredential.user.sendEmailVerification();
           auth().currentUser?.reload();
-        })
-        .then(() => {
-          setUser(auth().currentUser);
         });
     } catch (error) {
       setErrors(error);
