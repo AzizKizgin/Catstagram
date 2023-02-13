@@ -1,13 +1,13 @@
 import React, {FC, useState} from 'react';
 import {Box, Image} from 'native-base';
-import {useGetImageHeight} from '../../../utils/helpers';
+import {getImageHeight} from '../../../utils/helpers';
 
 interface Props {
   image: string;
 }
 
 const PostImage: FC<Props> = ({image}) => {
-  const height = useGetImageHeight(image);
+  const height = getImageHeight(image);
   return (
     <Box>
       <Image
