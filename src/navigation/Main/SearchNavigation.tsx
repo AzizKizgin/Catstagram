@@ -5,7 +5,10 @@ import {Search} from '../../screens';
 const SearchNavigation = () => {
   const Stack = createNativeStackNavigator();
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}>
       <Stack.Screen name="Search" component={Search} />
     </Stack.Navigator>
   );
