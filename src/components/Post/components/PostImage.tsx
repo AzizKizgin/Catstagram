@@ -1,24 +1,27 @@
-import React, {FC, useState} from 'react';
-import {Box, Image} from 'native-base';
+import React, {FC, memo} from 'react';
+import {Box} from 'native-base';
 import {getImageHeight} from '../../../utils/helpers';
+import {Image} from 'react-native';
 
 interface Props {
-  image: string;
+  image: PostImage;
 }
 
 const PostImage: FC<Props> = ({image}) => {
-  const height = getImageHeight(image);
   return (
     <Box>
       <Image
-        source={{uri: image}}
-        alt="post image"
-        resizeMode="contain"
-        height={height}
-        width="100%"
+        source={{
+          uri: `data:image/jpeg;base64,${image.imageUri}`,
+        }}
+        style={{
+          width: '100%',
+          height: image.height,
+        }}
+        resizeMode={'cover'}
       />
     </Box>
   );
 };
 
-export default PostImage;
+export default memo(PostImage);

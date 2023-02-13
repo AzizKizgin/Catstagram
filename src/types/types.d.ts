@@ -23,15 +23,15 @@ type Comment = {
   userId: string;
   text: string;
   createdAt: string;
-  likes: Likes;
+  likes?: Likes;
 };
 
 type Post = {
   id?: string;
   userId: string;
-  image: string;
+  image: PostImage;
   caption: string;
-  likes: Likes;
+  likes?: Likes;
   comments?: string[];
   createdAt: string;
 };
@@ -39,4 +39,9 @@ type Post = {
 type Likes = {
   likes?: number;
   userIds: string[];
+};
+
+type PostImage = {
+  imageUri: string;
+  height: number;
 };
