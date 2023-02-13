@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {HStack, Text} from 'native-base';
 import OptionButton from '../../Shared/OptionButton';
 import UserImage from '../../User/components/UserImage';
@@ -19,4 +19,4 @@ const PostUser = () => {
   );
 };
 
-export default PostUser;
+export default memo(PostUser);
