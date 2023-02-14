@@ -1,5 +1,6 @@
 import {createContext, useContext, useEffect, useState} from 'react';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import {addUserInfo} from '../data/postData';
 
 interface AuthContextProps {
   children: React.ReactNode;
@@ -82,6 +83,18 @@ export const AuthProvider = ({children}: AuthContextProps) => {
           });
           userCredential.user.sendEmailVerification();
           auth().currentUser?.reload();
+        })
+        .then(() => {
+          if (auth().currentUser?.uid) {
+            addUserInfo({
+              id: auth().currentUser?.uid,
+              bio: '',
+              email: email,
+              username: userName,
+              image: '',
+              createdAt: new Date().getTime().toString(),
+            });
+          }
         });
     } catch (error) {
       setErrors(error);
