@@ -13,7 +13,7 @@ const PostActions: FC<PostActionsProps> = (props) => {
   return (
     <HStack justifyContent={'space-between'} paddingX={'sm'} paddingTop={'xs'}>
       <HStack space={'sm'}>
-        <LikeButton />
+        <LikeButton size={23} />
         <CommentButton onPress={onCommentPress} />
         <ShareButton />
       </HStack>
