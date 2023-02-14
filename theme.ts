@@ -39,6 +39,11 @@ const theme = extendTheme({
   },
   components: {
     Pressable: {
+      baseStyle: {
+        _pressed: {
+          opacity: 0.5,
+        },
+      },
       variants: {
         login: {
           borderBottomWidth: 1,
