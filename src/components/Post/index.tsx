@@ -5,22 +5,7 @@ import PostActions from './components/PostActions';
 import PostImage from './components/PostImage';
 import PostInfo from './components/PostInfo';
 import PostUser from './components/PostUser';
-const fakeComments = [
-  {
-    comment: 'Lorem ipsum dolor sit amet.',
-    user: {
-      name: 'User Name',
-      image: 'https://picsum.photos/331',
-    },
-  },
-  {
-    comment: 'Consectetur adipiscing elit.',
-    user: {
-      name: 'User Name',
-      image: 'https://picsum.photos/331',
-    },
-  },
-];
+
 interface PostProps {
   post: Post;
 }
@@ -32,7 +17,7 @@ const Post: FC<PostProps> = (props) => {
   };
   return (
     <VStack space={'xs'}>
-      <PostUser />
+      <PostUser userId={post.userId} />
       <PostImage image={post.image} />
       <VStack space={'0.5'}>
         <PostActions onCommentPress={onCommentPress} />
@@ -41,7 +26,7 @@ const Post: FC<PostProps> = (props) => {
       <CommentModal
         isOpen={isCommentModalOpen}
         setIsOpen={setIsCommentModalOpen}
-        comments={fakeComments}
+        postId={post.id}
       />
     </VStack>
   );
