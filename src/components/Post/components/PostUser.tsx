@@ -1,9 +1,17 @@
-import React, {memo} from 'react';
+import React, {FC, memo, useEffect, useState} from 'react';
 import {HStack, Text} from 'native-base';
 import OptionButton from '../../Shared/OptionButton';
 import UserImage from '../../User/components/UserImage';
+import {getUserById} from '../../../data/getData';
 
-const PostUser = () => {
+interface PostUserProps {
+  userId: string;
+}
+const PostUser: FC<PostUserProps> = ({userId}) => {
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    getUserById(userId).then((user) => setUser(user));
+  }, []);
   return (
     <HStack
       justifyContent={'space-between'}
@@ -11,8 +19,8 @@ const PostUser = () => {
       paddingX={'s'}
       paddingTop={'xs'}>
       <HStack space={'xs'} justifyContent={'center'} alignItems={'center'}>
-        <UserImage image={'https://picsum.photos/331'} size={'xs'} />
-        <Text color={'white'}>User Name</Text>
+        <UserImage image={user?.image} size={'xs'} />
+        <Text color={'white'}>{user?.username}</Text>
       </HStack>
       <OptionButton />
     </HStack>
