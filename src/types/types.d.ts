@@ -11,11 +11,12 @@ type MainNavigationParamsList = {
 };
 
 type User = {
-  id: string;
-  name: string;
+  id?: string;
   email: string;
   username: string;
   image: string;
+  bio: string;
+  createdAt: string;
 };
 
 type Comment = {
@@ -32,12 +33,10 @@ type Post = {
   image: PostImage;
   caption: string;
   likes?: Likes;
-  comments?: string[];
   createdAt: string;
 };
 
 type Likes = {
-  likes?: number;
   userIds: string[];
 };
 
