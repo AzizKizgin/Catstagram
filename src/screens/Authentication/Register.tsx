@@ -1,4 +1,4 @@
-import {Box, Button, Icon, Pressable, Text, VStack} from 'native-base';
+import {Box, Button, VStack} from 'native-base';
 import React, {useState} from 'react';
 import {Formik} from 'formik';
 import FormInput from './components/FormInput';
@@ -8,12 +8,11 @@ import {
   registerForm,
   registerValidate,
 } from './constants/AuthenticationConstants';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import Logo from '../../components/Shared/Logo';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 const Register = () => {
   const {register} = useAuth();
-  const [errors, setErrors] = useState<any>(null);
+  const [error, setError] = useState<any>(null);
   const navigation = useNavigation<NavigationProp<AuthNavigationParamsList>>();
 
   return (
@@ -30,13 +29,18 @@ const Register = () => {
             email: values.email,
             password: values.password,
             userName: values.username,
-            setErrors,
+            setErrors: setError,
           });
-          if (!errors) {
-            navigation.navigate('Login');
-          }
+          navigation.navigate('Login');
         }}>
-        {({handleChange, handleBlur, handleSubmit, values, errors}) => (
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          isSubmitting,
+        }) => (
           <VStack space={'lg'}>
             <Logo />
             <FormInput
@@ -73,9 +77,10 @@ const Register = () => {
             />
             <Button
               onPress={() => handleSubmit()}
+              isDisabled={isSubmitting}
               backgroundColor={'cyan'}
               marginTop={'sm'}>
-              Register
+              {isSubmitting ? 'Please Wait...' : 'Register'}
             </Button>
           </VStack>
         )}
