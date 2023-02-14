@@ -28,9 +28,9 @@ export const getTimeDifference = (timestamp: string) => {
 
   switch (true) {
     case diff < 1:
-      return 'just now';
+      return '1 second ago';
     case diff < 60:
-      return Math.floor(diff) + 'seconds ago';
+      return Math.floor(diff) + ' seconds ago';
     case diff < 3600:
       return Math.floor(Number(diff) / 60) + ' minutes ago';
     case diff < 86400:
