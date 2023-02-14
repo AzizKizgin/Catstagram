@@ -1,23 +1,27 @@
-import {Box, VStack, Icon, Text, Center, Input, HStack} from 'native-base';
-import React, {FC, useEffect} from 'react';
+import {Box, VStack, Icon, Text, Center, Button} from 'native-base';
+import React, {FC, useEffect, useState} from 'react';
 import {Modal} from 'react-native';
 import Comment from '../../../Comment';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import TextInput from '../../../Shared/TextInput';
+import SendButton from '../../../Shared/SendButton';
+import {addComment} from '../../../../data/postData';
+import {useAuth} from '../../../../context/AuthContext';
+import {getComments} from '../../../../data/getData';
+import {FlatList} from 'react-native-gesture-handler';
+import firestore from '@react-native-firebase/firestore';
 
 interface CommentModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  comments: Array<{
-    comment: string;
-    user: {
-      name: string;
-      image: string;
-    };
-  }>;
+  postId?: string;
 }
 const CommentModal: FC<CommentModalProps> = (props) => {
-  const {isOpen, comments, setIsOpen} = props;
-
+  const {isOpen, postId, setIsOpen} = props;
+  const [text, setText] = useState('');
+  const [comments, setComments] = useState<Comment[]>([]);
+  const {user} = useAuth();
+  getComments(postId).then((comments) => setComments(comments));
   return (
     <Modal
       visible={isOpen}
@@ -46,36 +50,32 @@ const CommentModal: FC<CommentModalProps> = (props) => {
             </Text>
           </Center>
         </Box>
-        <VStack space={2} flex={1} paddingX={'sm'}>
-          {comments.map((comment, index) => (
+        <FlatList
+          data={comments}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({item}) => (
             <Comment
-              key={index}
-              comment={comment.comment}
-              user={comment.user}
+              comment={item.text}
+              userId={item.userId}
+              createdAt={item.createdAt}
             />
-          ))}
-        </VStack>
+          )}
+        />
         <Box
           flexDirection={'row'}
           backgroundColor={'itemBgDark'}
           padding={'sm'}
           alignItems={'center'}
           justifyContent={'space-between'}>
-          <Input
-            placeholder="Add a comment..."
-            flex={1}
-            focusOutlineColor={'inactiveTextDark'}
-            backgroundColor={'itemBgDark'}
-            fontSize={'sm'}
-            color={'textDark'}
-            cursorColor={'textDark'}
+          <TextInput
+            placeholder={'Add a comment...'}
+            value={text}
+            onChangeText={setText}
           />
-          <Icon
-            as={Ionicons}
-            name="ios-send"
-            size="lg"
-            color="iconColor"
-            marginLeft={'sm'}
+          <SendButton
+            onPress={() => {
+              addComment(postId, text, user?.uid);
+            }}
           />
         </Box>
       </Box>
