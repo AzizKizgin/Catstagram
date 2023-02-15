@@ -59,11 +59,41 @@ export const getComments = async (postId?: string) => {
   }, []);
   if (comments) {
     comments.sort((a, b) => {
-      if (a.likes?.userIds.length && b.likes?.userIds.length) {
-        return b.likes?.userIds.length - a.likes?.userIds.length;
+      if (a.likes?.length && b.likes?.length) {
+        return b.likes?.length - a.likes?.length;
       }
       return 0;
     });
   }
   return comments;
+};
+
+export const checkUserLikedPost = async (postId?: string, userId?: string) => {
+  const [liked, setLiked] = useState<boolean>(false);
+  if (postId && userId) {
+    const postDoc = await firestore().collection('posts').doc(postId).get();
+    const post = postDoc.data();
+    if (post) {
+      if (post.likes?.includes(userId)) {
+        setLiked(true);
+      } else {
+        setLiked(false);
+      }
+    }
+  }
+  return liked;
+};
+
+export const getPostLikes = async (postId?: string) => {
+  const [likes, setLikes] = useState<string[]>([]);
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('posts')
+      .doc(postId)
+      .onSnapshot((documentSnapshot) => {
+        setLikes(documentSnapshot.data()?.likes);
+      });
+    return () => subscriber();
+  }, []);
+  return likes;
 };
