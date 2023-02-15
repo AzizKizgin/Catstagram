@@ -15,7 +15,11 @@ const AddPost = () => {
   const {user} = useAuth();
   const [error, setError] = useState<string>('');
   const navigation = useNavigation();
-
+  useEffect(() => {
+    navigation.getParent()?.setOptions({
+      tabBarStyle: {display: 'none'},
+    });
+  }, []);
   useEffect(() => {
     const getImages = async () => {
       const result = await launchImageLibrary({
