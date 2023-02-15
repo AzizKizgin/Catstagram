@@ -5,8 +5,13 @@ export const addPost = async (
   setErrorMessage: (message: string) => void,
 ) => {
   const postDoc = firestore().collection('posts').doc(post.id);
+  const postObj: Post = {
+    ...post,
+    id: postDoc.id,
+    likes: [],
+  };
   await postDoc
-    .set(post)
+    .set(postObj)
     .catch((error) => {
       setErrorMessage(error.message);
     })
@@ -68,6 +73,64 @@ export const addComment = async (
         await postDoc.set({
           comments: firestore.FieldValue.arrayUnion(commentObj),
         });
+      }
+    });
+  }
+};
+
+export const likePost = async (postId?: string, userId?: string) => {
+  if (postId && userId) {
+    const postDoc = firestore().collection('posts').doc(postId);
+    postDoc.get().then(async (doc) => {
+      if (doc.exists) {
+        const isLiked = doc.data()?.likes?.includes(userId);
+        if (!isLiked) {
+          await postDoc
+            .update({
+              likes: firestore.FieldValue.arrayUnion(userId),
+            })
+            .then(() => {
+              const userDoc = firestore()
+                .collection('users')
+                .doc(userId)
+                .collection('activities')
+                .doc('likes');
+              userDoc.get().then(async (doc) => {
+                if (doc.exists) {
+                  await userDoc.update({
+                    likes: firestore.FieldValue.arrayUnion(postId),
+                  });
+                } else {
+                  await userDoc.set({
+                    likes: firestore.FieldValue.arrayUnion(postId),
+                  });
+                }
+              });
+            });
+        } else {
+          await postDoc
+            .update({
+              likes: firestore.FieldValue.arrayRemove(userId),
+            })
+            .then(() => {
+              const userDoc = firestore()
+                .collection('users')
+                .doc(userId)
+                .collection('activities')
+                .doc('likes');
+              userDoc.get().then(async (doc) => {
+                if (doc.exists) {
+                  await userDoc.update({
+                    likes: firestore.FieldValue.arrayRemove(postId),
+                  });
+                } else {
+                  await userDoc.set({
+                    likes: firestore.FieldValue.arrayRemove(postId),
+                  });
+                }
+              });
+            });
+        }
       }
     });
   }
