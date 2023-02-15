@@ -13,7 +13,7 @@ const Feed = () => {
       getPosts().then((posts) => setPosts(posts));
     });
     return unsubscribe;
-  }, [navigation]);
+  }, []);
 
   return (
     <Box flex={1} backgroundColor={'bgDark'}>
