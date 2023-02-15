@@ -21,6 +21,7 @@ const Feed = () => {
         data={posts}
         renderItem={({item}) => <Post post={item} />}
         keyExtractor={(item, index) => index.toString()}
+        ListFooterComponent={<Box height={50} />}
       />
     </Box>
   );
