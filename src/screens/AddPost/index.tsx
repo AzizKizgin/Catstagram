@@ -5,7 +5,7 @@ import {Alert, Image} from 'react-native';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useAuth} from '../../context/AuthContext';
-import {addPost} from '../../data/postData';
+import {addPost} from '../../data/Posts/postData';
 import {getImageRatio} from '../../utils/helpers';
 
 const AddPost = () => {

@@ -4,9 +4,8 @@ import LikeButton from '../../Shared/LikeButton';
 import CommentButton from '../../Shared/CommentButton';
 import ShareButton from '../../Shared/ShareButton';
 import SaveButton from '../../Shared/SaveButton';
-import {checkUserLikedPost, getPostLikes} from '../../../data/getData';
 import {useAuth} from '../../../context/AuthContext';
-import {likePost} from '../../../data/postData';
+import {getPostLikes, likePost} from '../../../data/Posts/postData';
 
 interface PostActionsProps {
   onCommentPress: () => void;

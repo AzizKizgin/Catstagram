@@ -5,10 +5,9 @@ import Comment from '../../components/Comment';
 import SendButton from '../../components/Shared/SendButton';
 import TextInput from '../../components/Shared/TextInput';
 import {useAuth} from '../../context/AuthContext';
-import {getComments} from '../../data/getData';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import {addComment} from '../../data/postData';
+import {addComment, getComments} from '../../data/Comments/commentData';
 
 const Comments = () => {
   const route = useRoute<RouteProp<FeedNavigationParamsList>>();

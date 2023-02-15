@@ -2,7 +2,7 @@ import React, {FC, memo, useEffect, useState} from 'react';
 import {HStack, Text} from 'native-base';
 import OptionButton from '../../Shared/OptionButton';
 import UserImage from '../../User/components/UserImage';
-import {getUserById} from '../../../data/getData';
+import {getUserById} from '../../../data/Users/userData';
 
 interface PostUserProps {
   userId: string;

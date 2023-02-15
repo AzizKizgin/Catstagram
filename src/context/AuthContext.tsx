@@ -1,6 +1,6 @@
 import {createContext, useContext, useEffect, useState} from 'react';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
-import {addUserInfo} from '../data/postData';
+import {addUserInfo} from '../data/Users/userData';
 
 interface AuthContextProps {
   children: React.ReactNode;

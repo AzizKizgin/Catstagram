@@ -1,4 +1,26 @@
 import firestore from '@react-native-firebase/firestore';
+import {useEffect, useState} from 'react';
+
+export const getPosts = async () => {
+  const allPostsDocs = await firestore().collection('posts').get();
+  const allPosts = allPostsDocs.docs.map((doc) => doc.data());
+  let posts: Post[] = [];
+  allPosts.map((post, index) => {
+    let postObj: Post = {
+      id: allPostsDocs.docs[index].id,
+      userId: post.userId,
+      caption: post.caption,
+      image: post.image,
+      createdAt: post.createdAt,
+      likes: post.likes,
+    };
+    posts.push(postObj);
+  });
+  posts.sort((a, b) => {
+    return Number(b.createdAt) - Number(a.createdAt);
+  });
+  return posts;
+};
 
 export const addPost = async (
   post: Post,
@@ -33,49 +55,6 @@ export const addPost = async (
         }
       });
     });
-};
-
-export const addUserInfo = async (user: User) => {
-  if (user.id) {
-    const userDoc = firestore()
-      .collection('users')
-      .doc(user.id)
-      .collection('info')
-      .doc('info');
-    await userDoc.set(user);
-  } else {
-    console.log('User ID is undefined');
-  }
-};
-
-export const addComment = async (
-  postId?: string,
-  comment?: string,
-  userId?: string,
-) => {
-  if (postId && comment && userId) {
-    const commentObj: Comment = {
-      text: comment,
-      createdAt: new Date().getTime().toString(),
-      userId: userId,
-    };
-    const postDoc = firestore()
-      .collection('posts')
-      .doc(postId)
-      .collection('activities')
-      .doc('comments');
-    postDoc.get().then(async (doc) => {
-      if (doc.exists) {
-        await postDoc.update({
-          comments: firestore.FieldValue.arrayUnion(commentObj),
-        });
-      } else {
-        await postDoc.set({
-          comments: firestore.FieldValue.arrayUnion(commentObj),
-        });
-      }
-    });
-  }
 };
 
 export const likePost = async (postId?: string, userId?: string) => {
@@ -134,4 +113,18 @@ export const likePost = async (postId?: string, userId?: string) => {
       }
     });
   }
+};
+
+export const getPostLikes = async (postId?: string) => {
+  const [likes, setLikes] = useState<string[]>([]);
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('posts')
+      .doc(postId)
+      .onSnapshot((documentSnapshot) => {
+        setLikes(documentSnapshot.data()?.likes);
+      });
+    return () => subscriber();
+  }, []);
+  return likes;
 };

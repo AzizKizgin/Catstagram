@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Box} from 'native-base';
 import Post from '../../components/Post';
-import {getPosts} from '../../data/getData';
 import {FlatList} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
+import {getPosts} from '../../data/Posts/postData';
 
 const Feed = () => {
   const [posts, setPosts] = useState<Post[]>([]);

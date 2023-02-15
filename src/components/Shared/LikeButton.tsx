@@ -4,7 +4,7 @@ import AnimatedPressable from '../AnimatedComponents/AnimatedPressable';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ThemeComponentSizeType} from 'native-base/lib/typescript/components/types';
 import {useAuth} from '../../context/AuthContext';
-import {checkUserLikedPost} from '../../data/getData';
+import {checkUserLikedPost} from '../../data/Users/userData';
 interface LikeButtonProps {
   onPress?: () => void;
   size?: ThemeComponentSizeType<'Icon'>;
