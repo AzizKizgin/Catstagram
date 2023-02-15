@@ -1,6 +1,7 @@
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {VStack} from 'native-base';
 import React, {useState, memo, FC} from 'react';
-import CommentModal from './components/modals/CommentModal';
 import PostActions from './components/PostActions';
 import PostImage from './components/PostImage';
 import PostInfo from './components/PostInfo';
@@ -11,9 +12,10 @@ interface PostProps {
 }
 const Post: FC<PostProps> = (props) => {
   const {post} = props;
-  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const navigation =
+    useNavigation<NativeStackNavigationProp<FeedNavigationParamsList>>();
   const onCommentPress = () => {
-    setIsCommentModalOpen(true);
+    navigation.navigate('Comments', {postId: post.id});
   };
   return (
     <VStack space={'xs'}>
@@ -23,11 +25,6 @@ const Post: FC<PostProps> = (props) => {
         <PostActions onCommentPress={onCommentPress} />
         <PostInfo caption={post.caption} timestamp={post.createdAt} />
       </VStack>
-      <CommentModal
-        isOpen={isCommentModalOpen}
-        setIsOpen={setIsCommentModalOpen}
-        postId={post.id}
-      />
     </VStack>
   );
 };
