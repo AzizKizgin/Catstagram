@@ -10,6 +10,12 @@ type MainNavigationParamsList = {
   Explore: undefined;
 };
 
+type FeedNavigationParamsList = {
+  Feed: undefined;
+  AddPost: undefined;
+  Comments: {postId?: string};
+};
+
 type User = {
   id?: string;
   email: string;
