@@ -18,11 +18,11 @@ const Post: FC<PostProps> = (props) => {
     navigation.navigate('Comments', {postId: post.id});
   };
   return (
-    <VStack space={'xs'}>
+    <VStack space={'xs'} marginTop={'sm'}>
       <PostUser userId={post.userId} />
       <PostImage image={post.image} />
-      <VStack space={'0.5'}>
-        <PostActions onCommentPress={onCommentPress} />
+      <VStack>
+        <PostActions onCommentPress={onCommentPress} postId={post.id} />
         <PostInfo caption={post.caption} timestamp={post.createdAt} />
       </VStack>
     </VStack>

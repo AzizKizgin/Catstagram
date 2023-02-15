@@ -1,24 +1,42 @@
-import React, {FC, memo} from 'react';
-import {HStack} from 'native-base';
+import React, {FC, memo, useEffect, useState} from 'react';
+import {HStack, VStack, Text} from 'native-base';
 import LikeButton from '../../Shared/LikeButton';
 import CommentButton from '../../Shared/CommentButton';
 import ShareButton from '../../Shared/ShareButton';
 import SaveButton from '../../Shared/SaveButton';
+import {checkUserLikedPost, getPostLikes} from '../../../data/getData';
+import {useAuth} from '../../../context/AuthContext';
+import {likePost} from '../../../data/postData';
 
 interface PostActionsProps {
   onCommentPress: () => void;
+  postId?: string;
 }
 const PostActions: FC<PostActionsProps> = (props) => {
-  const {onCommentPress} = props;
+  const {onCommentPress, postId} = props;
+  const [likes, setLikes] = useState<string[]>([]);
+  const {user} = useAuth();
+  getPostLikes(postId).then((likes) => {
+    setLikes(likes);
+  });
   return (
-    <HStack justifyContent={'space-between'} paddingX={'sm'} paddingTop={'xs'}>
-      <HStack space={'sm'}>
-        <LikeButton size={23} />
-        <CommentButton onPress={onCommentPress} />
-        <ShareButton />
+    <VStack paddingX={'sm'} space={'0.5'}>
+      <HStack justifyContent={'space-between'} paddingTop={'xs'}>
+        <HStack space={'sm'}>
+          <LikeButton
+            size={23}
+            id={postId}
+            onPress={() => {
+              user && likePost(postId, user.uid);
+            }}
+          />
+          <CommentButton onPress={onCommentPress} />
+          <ShareButton />
+        </HStack>
+        <SaveButton />
       </HStack>
-      <SaveButton />
-    </HStack>
+      {likes.length > 0 && <Text color={'textDark'}>{likes.length} likes</Text>}
+    </VStack>
   );
 };
 
