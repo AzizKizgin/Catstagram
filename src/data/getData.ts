@@ -57,11 +57,13 @@ export const getComments = async (postId?: string) => {
       });
     return () => subscriber();
   }, []);
-  comments.sort((a, b) => {
-    if (a.likes?.userIds.length && b.likes?.userIds.length) {
-      return b.likes?.userIds.length - a.likes?.userIds.length;
-    }
-    return 0;
-  });
+  if (comments) {
+    comments.sort((a, b) => {
+      if (a.likes?.userIds.length && b.likes?.userIds.length) {
+        return b.likes?.userIds.length - a.likes?.userIds.length;
+      }
+      return 0;
+    });
+  }
   return comments;
 };
