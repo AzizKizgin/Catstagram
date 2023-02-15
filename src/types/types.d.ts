@@ -38,7 +38,7 @@ type Post = {
   userId: string;
   image: PostImage;
   caption: string;
-  likes: string[];
+  likes?: string[];
   createdAt: string;
 };
 
