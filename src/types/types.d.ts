@@ -30,7 +30,7 @@ type Comment = {
   userId: string;
   text: string;
   createdAt: string;
-  likes?: Likes;
+  likes?: string[];
 };
 
 type Post = {
@@ -38,12 +38,8 @@ type Post = {
   userId: string;
   image: PostImage;
   caption: string;
-  likes?: Likes;
+  likes: string[];
   createdAt: string;
-};
-
-type Likes = {
-  userIds: string[];
 };
 
 type PostImage = {
