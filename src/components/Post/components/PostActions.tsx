@@ -4,7 +4,6 @@ import LikeButton from '../../Shared/LikeButton';
 import CommentButton from '../../Shared/CommentButton';
 import ShareButton from '../../Shared/ShareButton';
 import SaveButton from '../../Shared/SaveButton';
-import {useAuth} from '../../../context/AuthContext';
 import {usePost} from '../../../context/PostContext';
 
 const PostActions = () => {
