@@ -1,4 +1,4 @@
-import {Box, HStack, Text} from 'native-base';
+import {Box, HStack, Text, VStack} from 'native-base';
 import React, {FC, memo} from 'react';
 import {defaultProfileImage} from '../../utils/consts';
 import {getTimeDifference} from '../../utils/helpers';
@@ -37,7 +37,10 @@ const Comment: FC<CommentProps> = (props) => {
           </Text>
         </Box>
       </HStack>
-      <LikeButton size={'md'} />
+      <VStack alignItems={'center'}>
+        <LikeButton size={'md'} />
+        <Text color={'gray.400'}>10</Text>
+      </VStack>
     </HStack>
   );
 };
