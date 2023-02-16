@@ -4,7 +4,7 @@ type AuthNavigationParamsList = {
   ResetPassword: undefined;
 };
 
-type MainNavigationParamsList = {
+type MainTabParamsList = {
   Home: undefined;
   Profile: undefined;
   Explore: undefined;
@@ -12,8 +12,12 @@ type MainNavigationParamsList = {
 
 type FeedNavigationParamsList = {
   Feed: undefined;
-  AddPost: undefined;
   Comments: {postId?: string};
+};
+
+type MainNavigationParamsList = {
+  MainTab: undefined;
+  AddPost: undefined;
 };
 
 type User = {
