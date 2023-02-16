@@ -10,7 +10,7 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {addComment, getComments} from '../../data/Comments/commentData';
 
 const Comments = () => {
-  const route = useRoute<RouteProp<FeedNavigationParamsList>>();
+  const route = useRoute<RouteProp<FeedNavigationParamsList, 'Comments'>>();
   const navigation = useNavigation();
   const postId = route.params?.postId;
   const [text, setText] = useState('');

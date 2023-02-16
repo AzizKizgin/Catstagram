@@ -1,12 +1,15 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Icon} from 'native-base';
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import theme from '../../theme';
+import {AddPost} from '../screens';
+import AddPostHeader from './components/AddPostHeader';
 import {AccountNavigation, FeedNavigation, SearchNavigation} from './Main';
 
-const MainNavigation = () => {
-  const Tab = createBottomTabNavigator<MainNavigationParamsList>();
+const MainTab = () => {
+  const Tab = createBottomTabNavigator<MainTabParamsList>();
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -44,6 +47,24 @@ const MainNavigation = () => {
       <Tab.Screen name="Explore" component={SearchNavigation} />
       <Tab.Screen name="Profile" component={AccountNavigation} />
     </Tab.Navigator>
+  );
+};
+
+const MainNavigation = () => {
+  const Stack = createNativeStackNavigator<MainNavigationParamsList>();
+  return (
+    <Stack.Navigator
+      screenOptions={({route}) => ({
+        headerShown: route.name === 'AddPost',
+        header(props) {
+          if (props.route.name === 'AddPost') {
+            return <AddPostHeader props={props} />;
+          }
+        },
+      })}>
+      <Stack.Screen name="MainTab" component={MainTab} />
+      <Stack.Screen name="AddPost" component={AddPost} />
+    </Stack.Navigator>
   );
 };
 

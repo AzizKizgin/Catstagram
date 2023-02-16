@@ -1,4 +1,5 @@
 import {useNavigation, useRoute} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Box, Button, Center, HStack, Icon, Input, Text} from 'native-base';
 import React, {useEffect, useState} from 'react';
 import {Alert, Image} from 'react-native';
@@ -7,6 +8,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useAuth} from '../../context/AuthContext';
 import {addPost} from '../../data/Posts/postData';
 import {getImageRatio} from '../../utils/helpers';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddPost = () => {
   const [images, setImages] = useState<Asset | null>(null);
@@ -14,7 +16,8 @@ const AddPost = () => {
   const [caption, setCaption] = useState<string>('');
   const {user} = useAuth();
   const [error, setError] = useState<string>('');
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<MainNavigationParamsList>>();
   useEffect(() => {
     navigation.getParent()?.setOptions({
       tabBarStyle: {display: 'none'},
@@ -89,7 +92,8 @@ const AddPost = () => {
                 },
                 setError,
               ).then(() => {
-                navigation.goBack();
+                AsyncStorage.setItem('refresh', 'true');
+                navigation.navigate('MainTab');
               });
             } else {
               setError('Something went wrong');
