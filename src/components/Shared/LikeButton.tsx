@@ -1,5 +1,5 @@
-import {Box, Icon, Text} from 'native-base';
-import React, {FC, useEffect, useState} from 'react';
+import {Box, Icon} from 'native-base';
+import React, {FC, useState} from 'react';
 import AnimatedPressable from '../AnimatedComponents/AnimatedPressable';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ThemeComponentSizeType} from 'native-base/lib/typescript/components/types';
