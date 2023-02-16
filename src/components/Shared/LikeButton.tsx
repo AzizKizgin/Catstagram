@@ -5,6 +5,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ThemeComponentSizeType} from 'native-base/lib/typescript/components/types';
 import {useAuth} from '../../context/AuthContext';
 import {checkUserLikedPost} from '../../data/Users/userData';
+import {usePost} from '../../context/PostContext';
 interface LikeButtonProps {
   onPress?: () => void;
   size?: ThemeComponentSizeType<'Icon'>;
@@ -12,15 +13,17 @@ interface LikeButtonProps {
 }
 const LikeButton: FC<LikeButtonProps> = (props) => {
   const [isLiked, setIsLiked] = useState(false);
-  const {onPress, size, id} = props;
+  const {post, like} = usePost();
   const {user} = useAuth();
 
-  checkUserLikedPost(id, user?.uid).then((isLiked) => {
+  const {size} = props;
+
+  checkUserLikedPost(post?.id, user?.uid).then((isLiked) => {
     setIsLiked(isLiked);
   });
 
   return (
-    <AnimatedPressable onPress={onPress}>
+    <AnimatedPressable onPress={like}>
       {isLiked ? (
         <Box>
           <Icon as={AntDesign} name="like1" size={size} color="cyan" />
