@@ -11,19 +11,13 @@ interface LikeButtonProps {
   size?: ThemeComponentSizeType<'Icon'>;
   id?: string;
 }
-const LikeButton: FC<LikeButtonProps> = (props) => {
+const CommentLikeButton: FC<LikeButtonProps> = (props) => {
   const [isLiked, setIsLiked] = useState(false);
-  const {post, like} = usePost();
-  const {user} = useAuth();
 
-  const {size} = props;
-
-  checkUserLikedPost(post?.id, user?.uid).then((isLiked) => {
-    setIsLiked(isLiked);
-  });
+  const {size, onPress, id} = props;
 
   return (
-    <AnimatedPressable onPress={like}>
+    <AnimatedPressable onPress={onPress}>
       {isLiked ? (
         <Box>
           <Icon as={AntDesign} name="like1" size={size} color="cyan" />
@@ -37,4 +31,4 @@ const LikeButton: FC<LikeButtonProps> = (props) => {
   );
 };
 
-export default LikeButton;
+export default CommentLikeButton;
