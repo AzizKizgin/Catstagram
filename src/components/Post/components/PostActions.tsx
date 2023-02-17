@@ -1,25 +1,28 @@
-import React, {memo} from 'react';
+import React, {FC, memo} from 'react';
 import {HStack, VStack, Text} from 'native-base';
-import LikeButton from '../../Shared/LikeButton';
+import PostLikeButton from '../../Shared/PostLikeButton';
 import CommentButton from '../../Shared/CommentButton';
 import ShareButton from '../../Shared/ShareButton';
 import SaveButton from '../../Shared/SaveButton';
 import {usePost} from '../../../context/PostContext';
 
-const PostActions = () => {
+interface PostActionsProps {
+  isDetail?: boolean;
+}
+const PostActions: FC<PostActionsProps> = ({isDetail = false}) => {
   const {onCommentPress, likes, like, post} = usePost();
   return (
     <VStack paddingX={'sm'} space={'0.5'}>
       <HStack justifyContent={'space-between'} paddingTop={'xs'}>
         <HStack space={'sm'}>
-          <LikeButton
+          <PostLikeButton
             size={23}
             id={post?.id}
             onPress={() => {
               like();
             }}
           />
-          <CommentButton onPress={onCommentPress} />
+          {!isDetail && <CommentButton onPress={onCommentPress} />}
           <ShareButton />
         </HStack>
         <SaveButton />
