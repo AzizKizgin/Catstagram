@@ -13,6 +13,12 @@ type MainTabParamsList = {
 type FeedNavigationParamsList = {
   Feed: undefined;
   Comments: {postId?: string};
+  UserAccount: {userId?: string};
+};
+
+type AccountNavigationParamsList = {
+  Account: undefined;
+  PostDetail: {postId?: string};
 };
 
 type MainNavigationParamsList = {
