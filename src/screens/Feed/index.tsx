@@ -14,6 +14,7 @@ const Feed = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const refreshData = () => {
     getPosts().then((posts) => {
+      AsyncStorage.setItem('posts', JSON.stringify(posts));
       setPosts(posts);
     });
   };
@@ -30,7 +31,14 @@ const Feed = () => {
   }, []);
 
   useEffect(() => {
-    getPosts().then((posts) => setPosts(posts));
+    AsyncStorage.getItem('posts').then((value) => {
+      if (value) {
+        setPosts(JSON.parse(value));
+        console.log('posts from async storage');
+      } else {
+        getPosts().then((posts) => setPosts(posts));
+      }
+    });
   }, []);
 
   return (
