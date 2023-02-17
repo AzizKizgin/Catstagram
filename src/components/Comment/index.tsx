@@ -24,7 +24,7 @@ const Comment: FC<CommentProps> = (props) => {
       paddingX={'m'}
       space={'4'}>
       <HStack space={'4'} alignItems={'center'} flex={1}>
-        <UserImage image={defaultProfileImage} size={'small'} />
+        <UserImage image={defaultProfileImage} size={'small'} userId={userId} />
         <Box flex={1}>
           <HStack space={'2'}>
             <Text color={'gray.400'} textAlign={'left'}>
