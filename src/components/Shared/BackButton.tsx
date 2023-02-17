@@ -11,7 +11,7 @@ const BackButton: FC<BackButtonProps> = (props) => {
   return (
     <AnimatedPressable onPress={onPress} padding={'xs'}>
       <Box>
-        <Icon as={Ionicons} name="ios-arrow-back" size="23" color="iconColor" />
+        <Icon as={Ionicons} name="ios-arrow-back" size="27" color="iconColor" />
       </Box>
     </AnimatedPressable>
   );

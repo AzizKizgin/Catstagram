@@ -1,5 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import {useEffect, useState} from 'react';
+import {getPostById} from '../Posts/postData';
 
 export const addUserInfo = async (user: User) => {
   if (user.id) {
@@ -14,24 +15,26 @@ export const addUserInfo = async (user: User) => {
   }
 };
 
-export const getUserById = async (userId: string) => {
-  const userDoc = await firestore()
-    .collection('users')
-    .doc(userId)
-    .collection('info')
-    .doc('info')
-    .get();
-  const user = userDoc.data();
-  if (user) {
-    let userObj: User = {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      image: user.image,
-      bio: user.bio,
-      createdAt: user.createdAt,
-    };
-    return userObj;
+export const getUserById = async (userId?: string) => {
+  if (userId) {
+    const userDoc = await firestore()
+      .collection('users')
+      .doc(userId)
+      .collection('info')
+      .doc('info')
+      .get();
+    const user = userDoc.data();
+    if (user) {
+      let userObj: User = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        image: user.image,
+        bio: user.bio,
+        createdAt: user.createdAt,
+      };
+      return userObj;
+    }
   }
   return null;
 };
@@ -50,4 +53,32 @@ export const checkUserLikedPost = async (postId?: string, userId?: string) => {
     }
   }
   return liked;
+};
+
+export const getUserPosts = async (userId?: string) => {
+  const allPosts: Post[] = [];
+  if (userId) {
+    let allPostIds: string[] = [];
+    const allPostsDocs = await firestore()
+      .collection('users')
+      .doc(userId)
+      .collection('activities')
+      .doc('posts')
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          allPostIds = doc.data()?.posts;
+        }
+      });
+    if (allPostIds) {
+      for (let i = 0; i < allPostIds.length; i++) {
+        const post = await getPostById(allPostIds[i]);
+        if (post) {
+          allPosts.push(post);
+        }
+      }
+    }
+    return allPosts;
+  }
+  return [];
 };

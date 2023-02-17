@@ -4,12 +4,15 @@ import {Icon} from 'native-base';
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import theme from '../../theme';
+import {useAuth} from '../context/AuthContext';
 import {AddPost} from '../screens';
+import AccountImage from './components/AccountImage';
 import AddPostHeader from './components/AddPostHeader';
 import {AccountNavigation, FeedNavigation, SearchNavigation} from './Main';
 
 const MainTab = () => {
   const Tab = createBottomTabNavigator<MainTabParamsList>();
+  const {user} = useAuth();
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -30,14 +33,14 @@ const MainTab = () => {
             case 'Explore':
               iconName = 'search';
               break;
-            case 'Profile':
-              iconName = 'person';
-              break;
+          }
+          if (route.name === 'Profile') {
+            return <AccountImage focused={focused} image={user?.photoURL} />;
           }
           return (
             <Icon
               as={<Ionicons name={iconName} />}
-              size="lg"
+              size="27"
               color={focused ? 'pink' : 'cyan'}
             />
           );

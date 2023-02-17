@@ -4,10 +4,11 @@ import {Image} from 'react-native';
 import {defaultProfileImage} from '../../../utils/consts';
 
 interface UserImageProps {
-  image?: string;
-  size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full';
+  image?: string | null;
+  size: 'small' | 'large';
 }
 const UserImage: FC<UserImageProps> = ({image, size}) => {
+  const imageSize = size === 'small' ? 35 : 80;
   return (
     <Center>
       <Image
@@ -15,8 +16,8 @@ const UserImage: FC<UserImageProps> = ({image, size}) => {
           uri: `data:image/jpeg;base64,${image || defaultProfileImage}`,
         }}
         style={{
-          width: 35,
-          height: 35,
+          width: imageSize,
+          height: imageSize,
         }}
       />
     </Center>

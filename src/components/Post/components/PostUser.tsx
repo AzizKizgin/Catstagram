@@ -19,7 +19,7 @@ const PostUser: FC<PostUserProps> = ({userId}) => {
       paddingX={'s'}
       paddingTop={'xs'}>
       <HStack space={'xs'} justifyContent={'center'} alignItems={'center'}>
-        <UserImage image={user?.image} size={'xs'} />
+        <UserImage image={user?.image} size={'small'} />
         <Text color={'white'}>{user?.username}</Text>
       </HStack>
       <OptionButton />

@@ -13,7 +13,7 @@ const Post: FC<PostProps> = (props) => {
   const {post} = props;
   return (
     <PostProvider post={post}>
-      <VStack space={'xs'} marginTop={'sm'}>
+      <VStack space={'xs'} marginBottom={'sm'}>
         <PostUser userId={post.userId} />
         <PostImage image={post.image} />
         <VStack>

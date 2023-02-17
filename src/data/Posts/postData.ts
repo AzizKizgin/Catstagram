@@ -128,3 +128,17 @@ export const getPostLikes = async (postId?: string) => {
   }, []);
   return likes;
 };
+
+export const getPostById = async (postId?: string) => {
+  const postDoc = await firestore().collection('posts').doc(postId).get();
+  const post = postDoc.data();
+  let postObj: Post = {
+    id: postDoc.id,
+    userId: post?.userId,
+    caption: post?.caption,
+    image: post?.image,
+    createdAt: post?.createdAt,
+    likes: post?.likes,
+  };
+  return postObj;
+};
