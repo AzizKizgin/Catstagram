@@ -78,6 +78,9 @@ export const getUserPosts = async (userId?: string) => {
         }
       }
     }
+    allPosts.sort((a, b) => {
+      return Number(b.createdAt) - Number(a.createdAt);
+    });
     return allPosts;
   }
   return [];
