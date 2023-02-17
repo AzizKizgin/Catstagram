@@ -36,7 +36,7 @@ const Feed = () => {
         setPosts(JSON.parse(value));
         console.log('posts from async storage');
       } else {
-        getPosts().then((posts) => setPosts(posts));
+        refreshData();
       }
     });
   }, []);
