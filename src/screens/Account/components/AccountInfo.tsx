@@ -21,7 +21,6 @@ const AccountInfo: FC<AccountInfoProps> = (props) => {
         textAlign={'left'}
         flexShrink={1}>
         {userInfo?.bio}
-        autem.
       </Text>
     </Box>
   );

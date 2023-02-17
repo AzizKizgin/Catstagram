@@ -82,3 +82,21 @@ export const getUserPosts = async (userId?: string) => {
   }
   return [];
 };
+
+export const updateUserInfo = async (
+  userId?: string,
+  userName?: string,
+  userBio?: string,
+) => {
+  if (userId) {
+    const userDoc = firestore()
+      .collection('users')
+      .doc(userId)
+      .collection('info')
+      .doc('info');
+    await userDoc.update({
+      username: userName,
+      bio: userBio,
+    });
+  }
+};
