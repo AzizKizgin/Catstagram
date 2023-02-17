@@ -5,12 +5,16 @@ export const addComment = async (
   postId?: string,
   comment?: string,
   userId?: string,
+  username?: string | null,
 ) => {
-  if (postId && comment && userId) {
+  if (postId && comment && userId && username) {
     const commentObj: Comment = {
+      username: username,
       text: comment,
       createdAt: new Date().getTime().toString(),
       userId: userId,
+      likes: [],
+      id: postId + userId + new Date().getTime().toString(),
     };
     const postDoc = firestore()
       .collection('posts')
@@ -53,4 +57,34 @@ export const getComments = async (postId?: string) => {
     });
   }
   return comments;
+};
+
+export const likeComment = async (
+  postId?: string,
+  commentId?: string,
+  userId?: string,
+) => {
+  if (postId && commentId && userId) {
+    const postDoc = firestore()
+      .collection('posts')
+      .doc(postId)
+      .collection('activities')
+      .doc('comments');
+    postDoc.get().then(async (doc) => {
+      if (doc.exists) {
+        const comments = doc.data()?.comments;
+        const comment = comments?.find((c: Comment) => c.id === commentId);
+        const index = comments?.indexOf(comment);
+        if (comment?.likes?.includes(userId)) {
+          comment.likes = comment.likes.filter((id: string) => id !== userId);
+        } else {
+          comment.likes.push(userId);
+        }
+        comments?.splice(index, 1, comment);
+        await postDoc.update({
+          comments: comments,
+        });
+      }
+    });
+  }
 };
