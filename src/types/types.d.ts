@@ -18,7 +18,7 @@ type FeedNavigationParamsList = {
 
 type AccountNavigationParamsList = {
   Account: undefined;
-  PostDetail: {postId?: string};
+  PostDetail: {post: Post};
 };
 
 type MainNavigationParamsList = {
@@ -38,6 +38,7 @@ type User = {
 type Comment = {
   id?: string;
   userId: string;
+  username: string;
   text: string;
   createdAt: string;
   likes?: string[];
