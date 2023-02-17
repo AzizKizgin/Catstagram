@@ -1,6 +1,6 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import {Feed} from '../../screens';
+import {Account, Feed} from '../../screens';
 import Comments from '../../screens/Comments';
 import AddPostHeader from '../components/AddPostHeader';
 import FeedHeader from '../components/FeedHeader';
@@ -24,6 +24,7 @@ const FeedNavigation = () => {
       }}>
       <Stack.Screen name="Feed" component={Feed} />
       <Stack.Screen name="Comments" component={Comments} />
+      <Stack.Screen name="UserAccount" component={Account} />
     </Stack.Navigator>
   );
 };
