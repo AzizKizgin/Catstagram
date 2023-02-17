@@ -48,11 +48,7 @@ const Comments = () => {
         data={comments}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({item}) => (
-          <Comment
-            comment={item.text}
-            userId={item.userId}
-            createdAt={item.createdAt}
-          />
+          <Comment comment={item} createdAt={item.createdAt} postId={postId} />
         )}
       />
       <Box
@@ -68,7 +64,7 @@ const Comments = () => {
         />
         <SendButton
           onPress={() => {
-            addComment(postId, text, user?.uid);
+            addComment(postId, text, user?.uid, user?.displayName);
             setText('');
           }}
         />
