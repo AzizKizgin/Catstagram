@@ -1,5 +1,4 @@
 import firestore from '@react-native-firebase/firestore';
-import {useEffect, useState} from 'react';
 
 export const addComment = async (
   postId?: string,
@@ -36,22 +35,22 @@ export const addComment = async (
 };
 
 export const getComments = async (postId?: string) => {
-  const [comments, setComments] = useState<Comment[]>([]);
-  useEffect(() => {
-    const subscriber = firestore()
-      .collection('posts')
-      .doc(postId)
-      .collection('activities')
-      .doc('comments')
-      .onSnapshot((documentSnapshot) => {
-        setComments(documentSnapshot.data()?.comments);
-      });
-    return () => subscriber();
-  }, []);
+  let comments: Comment[] = [];
+  const commentDoc = await firestore()
+    .collection('posts')
+    .doc(postId)
+    .collection('activities')
+    .doc('comments')
+    .get();
+  if (commentDoc.exists) {
+    comments.push(...commentDoc.data()?.comments);
+  }
   if (comments) {
     comments.sort((a, b) => {
-      if (a.likes?.length && b.likes?.length) {
-        return b.likes?.length - a.likes?.length;
+      if (a.likes?.length || b.likes?.length) {
+        return (b.likes?.length || 0) - (a.likes?.length || 0);
+      } else if (a.createdAt && b.createdAt) {
+        return Number(a.createdAt) - Number(b.createdAt);
       }
       return 0;
     });
@@ -87,4 +86,25 @@ export const likeComment = async (
       }
     });
   }
+};
+
+export const getCommentLikes = async (postId?: string, commentId?: string) => {
+  let likes: string[] = [];
+  if (postId && commentId) {
+    const commentDoc = await firestore()
+      .collection('posts')
+      .doc(postId)
+      .collection('activities')
+      .doc('comments')
+      .get();
+
+    if (commentDoc.exists) {
+      const comment = commentDoc
+        .data()
+        ?.comments.find((c: Comment) => c.id === commentId);
+      likes = comment?.likes || [];
+    }
+    return likes;
+  }
+  return likes;
 };
