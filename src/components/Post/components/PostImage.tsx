@@ -32,8 +32,6 @@ const PostImage: FC<Props> = ({image}) => {
     if (!isUserLiked) {
       like();
     }
-    console.log('first');
-
     scale.value = withSpring(1, undefined, (isFinished) => {
       if (isFinished) {
         scale.value = withDelay(100, withTiming(0));
