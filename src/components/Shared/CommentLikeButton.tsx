@@ -1,20 +1,20 @@
 import {Box, Icon} from 'native-base';
-import React, {FC, useState} from 'react';
+import React, {FC, memo, useEffect, useState} from 'react';
 import AnimatedPressable from '../AnimatedComponents/AnimatedPressable';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ThemeComponentSizeType} from 'native-base/lib/typescript/components/types';
-import {useAuth} from '../../context/AuthContext';
-import {checkUserLikedPost} from '../../data/Users/userData';
-import {usePost} from '../../context/PostContext';
 interface LikeButtonProps {
   onPress?: () => void;
   size?: ThemeComponentSizeType<'Icon'>;
   id?: string;
+  isUserLiked?: boolean;
 }
 const CommentLikeButton: FC<LikeButtonProps> = (props) => {
-  const [isLiked, setIsLiked] = useState(false);
-
-  const {size, onPress, id} = props;
+  const {size, onPress, id, isUserLiked = false} = props;
+  const [isLiked, setIsLiked] = useState(isUserLiked);
+  useEffect(() => {
+    setIsLiked(isUserLiked);
+  }, [isUserLiked]);
 
   return (
     <AnimatedPressable onPress={onPress}>
@@ -31,4 +31,4 @@ const CommentLikeButton: FC<LikeButtonProps> = (props) => {
   );
 };
 
-export default CommentLikeButton;
+export default memo(CommentLikeButton);

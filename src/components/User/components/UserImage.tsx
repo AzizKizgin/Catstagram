@@ -1,7 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Center} from 'native-base';
-import React, {FC} from 'react';
+import React, {FC, memo} from 'react';
 import {Image, Pressable} from 'react-native';
 import {defaultProfileImage} from '../../../utils/consts';
 
@@ -36,4 +36,4 @@ const UserImage: FC<UserImageProps> = ({image, size, userId}) => {
   );
 };
 
-export default UserImage;
+export default memo(UserImage);
