@@ -1,5 +1,5 @@
 import {RouteProp, useRoute} from '@react-navigation/native';
-import {Box, HStack, Pressable, Center, Text, Button} from 'native-base';
+import {Box} from 'native-base';
 import React, {useState, useEffect} from 'react';
 import Header from '../../components/Shared/Header';
 import {useAuth} from '../../context/AuthContext';
