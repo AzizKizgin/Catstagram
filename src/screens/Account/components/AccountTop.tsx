@@ -15,7 +15,7 @@ const AccountTop: FC<AccountTopProps> = (props) => {
       alignItems={'center'}
       space={8}
       paddingTop={'l'}>
-      <UserImage size={'large'} />
+      <UserImage size={'medium'} />
       <Center>
         <Text color={'textDark'} fontSize={'lg'} fontWeight={'bold'}>
           {postCount}

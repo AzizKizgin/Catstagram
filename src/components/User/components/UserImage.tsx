@@ -7,11 +7,22 @@ import {defaultProfileImage} from '../../../utils/consts';
 
 interface UserImageProps {
   image?: string | null;
-  size: 'small' | 'large';
+  size: 'small' | 'medium' | 'large';
   userId?: string;
 }
 const UserImage: FC<UserImageProps> = ({image, size, userId}) => {
-  const imageSize = size === 'small' ? 35 : 80;
+  let imageSize = 35;
+  switch (size) {
+    case 'small':
+      imageSize = 35;
+      break;
+    case 'medium':
+      imageSize = 80;
+      break;
+    case 'large':
+      imageSize = 150;
+      break;
+  }
   const navigation =
     useNavigation<NativeStackNavigationProp<FeedNavigationParamsList>>();
   const onPress = () => {
