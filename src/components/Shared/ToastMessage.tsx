@@ -1,6 +1,13 @@
 import React, {FC, useEffect, useState} from 'react';
-import {Box, Text} from 'native-base';
+import {Text} from 'native-base';
 import theme from '../../../theme';
+import {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from 'react-native-reanimated';
+import AnimatedBox from '../AnimatedComponents/AnimatedBox';
 
 interface ToastMessageProps {
   message: string;
@@ -23,15 +30,32 @@ const ToastMessage: FC<ToastMessageProps> = (props) => {
       toastColor = theme.colors.cyan;
       break;
   }
+
+  const bottom = useSharedValue(-100);
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      bottom: bottom.value,
+    };
+  });
+
   useEffect(() => {
     setShowToast(isVisible);
   }, [isVisible]);
 
+  useEffect(() => {
+    if (showToast) {
+      bottom.value = withTiming(5, {duration: 500}, (isFinished) => {
+        if (isFinished) {
+          bottom.value = withDelay(2000, withTiming(-100, {duration: 500}));
+        }
+      });
+    }
+  }, [showToast]);
+
   return (
-    <Box
+    <AnimatedBox
       display={showToast ? 'flex' : 'none'}
       position={'absolute'}
-      bottom={5}
       left={5}
       right={5}
       backgroundColor={toastColor}
@@ -39,10 +63,10 @@ const ToastMessage: FC<ToastMessageProps> = (props) => {
       alignItems={'center'}
       justifyContent={'center'}
       zIndex={999}
-      opacity={0.8}
-      borderRadius={'md'}>
+      borderRadius={'md'}
+      style={animatedStyle}>
       <Text color={'white'}>{message}</Text>
-    </Box>
+    </AnimatedBox>
   );
 };
 

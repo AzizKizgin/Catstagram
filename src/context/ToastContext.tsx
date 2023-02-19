@@ -6,7 +6,7 @@ interface ToastContextProps {
 }
 
 interface ToastContextType {
-  showToast: (message: string, type: ToastType, duration?: number) => void;
+  showToast: (message: string, type: ToastType) => void;
 }
 
 const ToastContext = createContext<ToastContextType>({
@@ -18,13 +18,13 @@ export const ToastProvider = ({children}: ToastContextProps) => {
   const [toastVisible, setToastVisible] = useState<boolean>(false);
   const [toastType, setToastType] = useState<ToastType>('success');
 
-  const showToast = (message: string, type: ToastType, duration?: number) => {
+  const showToast = (message: string, type: ToastType) => {
     setToastMessage(message);
     setToastType(type);
     setToastVisible(true);
     setTimeout(() => {
       setToastVisible(false);
-    }, duration || 3000);
+    }, 3000);
   };
 
   return (

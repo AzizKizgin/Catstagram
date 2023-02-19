@@ -34,7 +34,6 @@ const EditProfileModal: FC<EditProfileModalProps> = (props) => {
       showToast(
         'Profile updated successfully. Changes will be reflected when you re-enter the app',
         'success',
-        3000,
       );
     } else if (userName === '') {
       Alert.alert('Username cannot be empty');
