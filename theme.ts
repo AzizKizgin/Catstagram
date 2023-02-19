@@ -11,6 +11,7 @@ const themeColors = {
   iconColor: '#a3a3a3',
   purple: '#4a293e',
   blueGreen: '#1e4544',
+  yellow: '#ffcc00',
 };
 
 const theme = extendTheme({
@@ -25,6 +26,7 @@ const theme = extendTheme({
     iconColor: themeColors.iconColor,
     purple: themeColors.purple,
     blueGreen: themeColors.blueGreen,
+    yellow: themeColors.yellow,
   },
   space: {
     xxs: 2,
