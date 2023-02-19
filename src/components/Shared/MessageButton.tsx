@@ -10,7 +10,7 @@ const MessageButton = () => {
         <Icon
           as={MaterialCommunityIcons}
           name="ios-chatbubble-ellipses-outline"
-          size="23"
+          size="25"
           color="iconColor"
         />
       </Box>

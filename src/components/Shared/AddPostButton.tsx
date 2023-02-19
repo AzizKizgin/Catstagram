@@ -12,7 +12,7 @@ const AddPostButton: FC<AddPostButtonProps> = (props) => {
   return (
     <AnimatedPressable onPress={onPress} padding={'xs'}>
       <Box>
-        <Icon as={Feather} name="plus-square" size="23" color="iconColor" />
+        <Icon as={Feather} name="plus-square" size="25" color="iconColor" />
       </Box>
     </AnimatedPressable>
   );
