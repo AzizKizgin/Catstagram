@@ -57,3 +57,5 @@ type PostImage = {
   imageUri: string;
   height: number;
 };
+
+type ToastType = 'success' | 'info' | 'warning';

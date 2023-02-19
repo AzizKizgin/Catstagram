@@ -6,6 +6,7 @@ import TextInput from '../../../../components/Shared/TextInput';
 import {updateUserInfo} from '../../../../data/Users/userData';
 import {useAuth} from '../../../../context/AuthContext';
 import Header from '../../../../components/Shared/Header';
+import {useToast} from '../../../../context/ToastContext';
 
 interface EditProfileModalProps {
   userInfo?: User | null;
@@ -17,20 +18,28 @@ const EditProfileModal: FC<EditProfileModalProps> = (props) => {
   const [userName, setUserName] = useState(userInfo?.username || '');
   const [bio, setBio] = useState(userInfo?.bio || '');
   const {user} = useAuth();
+  const {showToast} = useToast();
   useEffect(() => {
     setUserName(userInfo?.username || '');
     setBio(userInfo?.bio || '');
   }, [modalVisible]);
 
   const saveChanges = () => {
-    if (userName !== '') {
+    if (userName !== '' && userName !== userInfo?.username) {
       updateUserInfo(userInfo?.id, userName, bio);
       user?.updateProfile({
         displayName: userName,
       });
       setModalVisible(false);
-    } else {
+      showToast(
+        'Profile updated successfully. Changes will be reflected when you re-enter the app',
+        'success',
+        3000,
+      );
+    } else if (userName === '') {
       Alert.alert('Username cannot be empty');
+    } else {
+      setModalVisible(false);
     }
   };
 
@@ -42,9 +51,7 @@ const EditProfileModal: FC<EditProfileModalProps> = (props) => {
       <Box flex={1} backgroundColor={'bgDark'} padding={'sm'}>
         <Header onPress={() => setModalVisible(false)} />
         <Box marginTop={'xxl'}>
-          <Pressable onPress={() => {}}>
-            <UserImage size={'large'} image={userInfo?.image} />
-          </Pressable>
+          <UserImage size={'large'} image={userInfo?.image} />
           <Box
             flexDirection={'row'}
             padding={'sm'}
