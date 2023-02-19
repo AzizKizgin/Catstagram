@@ -10,18 +10,12 @@ interface PostActionsProps {
   isDetail?: boolean;
 }
 const PostActions: FC<PostActionsProps> = ({isDetail = false}) => {
-  const {onCommentPress, likes, like, post} = usePost();
+  const {onCommentPress, likes} = usePost();
   return (
     <VStack paddingX={'sm'} space={'0.5'}>
       <HStack justifyContent={'space-between'} paddingTop={'xs'}>
         <HStack space={'sm'}>
-          <PostLikeButton
-            size={23}
-            id={post?.id}
-            onPress={() => {
-              like();
-            }}
-          />
+          <PostLikeButton />
           {!isDetail && <CommentButton onPress={onCommentPress} />}
           <ShareButton />
         </HStack>
