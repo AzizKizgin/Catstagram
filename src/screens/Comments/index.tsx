@@ -9,6 +9,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {addComment, getComments} from '../../data/Comments/commentData';
 import theme from '../../../theme';
+import {BackHandler} from 'react-native';
 
 const Comments = () => {
   const route = useRoute<RouteProp<FeedNavigationParamsList, 'Comments'>>();
@@ -24,11 +25,34 @@ const Comments = () => {
       setComments(comments);
     });
   };
+
+  const goBack = () => {
+    navigation.goBack();
+    navigation.getParent()?.setOptions({
+      tabBarStyle: {
+        backgroundColor: theme.colors.itemBgDark,
+        borderTopColor: theme.colors.itemBgDark,
+        height: 50,
+      },
+    });
+  };
+
   useEffect(() => {
     navigation.getParent()?.setOptions({
       tabBarStyle: {display: 'none'},
     });
     getPostComments();
+  }, []);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        goBack();
+        return true;
+      },
+    );
+    return () => backHandler.remove();
   }, []);
 
   return (
@@ -40,16 +64,7 @@ const Comments = () => {
           size="xl"
           color="iconColor"
           marginLeft={'sm'}
-          onPress={() => {
-            navigation.goBack();
-            navigation.getParent()?.setOptions({
-              tabBarStyle: {
-                backgroundColor: theme.colors.itemBgDark,
-                borderTopColor: theme.colors.itemBgDark,
-                height: 50,
-              },
-            });
-          }}
+          onPress={goBack}
         />
         <Center flex={1}>
           <Text
@@ -77,6 +92,11 @@ const Comments = () => {
               setLoading(false);
             }}
           />
+        }
+        ListEmptyComponent={
+          <Center flex={1} marginTop={'s'}>
+            <Text color={'textDark'}>No comments yet</Text>
+          </Center>
         }
       />
       <Box
