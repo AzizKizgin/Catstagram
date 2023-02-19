@@ -88,6 +88,7 @@ const Comments = () => {
             refreshing={loading}
             onRefresh={async () => {
               setLoading(true);
+              setComments([]);
               getPostComments();
               setLoading(false);
             }}
