@@ -40,7 +40,16 @@ const Comments = () => {
           size="xl"
           color="iconColor"
           marginLeft={'sm'}
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            navigation.goBack();
+            navigation.getParent()?.setOptions({
+              tabBarStyle: {
+                backgroundColor: theme.colors.itemBgDark,
+                borderTopColor: theme.colors.itemBgDark,
+                height: 50,
+              },
+            });
+          }}
         />
         <Center flex={1}>
           <Text
