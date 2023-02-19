@@ -18,11 +18,6 @@ const EditProfileModal: FC<EditProfileModalProps> = (props) => {
   const [bio, setBio] = useState(userInfo?.bio || '');
   const {user} = useAuth();
   useEffect(() => {
-    if (userInfo?.id === user?.uid) {
-      user?.updateProfile({
-        displayName: userName,
-      });
-    }
     setUserName(userInfo?.username || '');
     setBio(userInfo?.bio || '');
   }, [modalVisible]);
@@ -30,6 +25,9 @@ const EditProfileModal: FC<EditProfileModalProps> = (props) => {
   const saveChanges = () => {
     if (userName !== '') {
       updateUserInfo(userInfo?.id, userName, bio);
+      user?.updateProfile({
+        displayName: userName,
+      });
       setModalVisible(false);
     } else {
       Alert.alert('Username cannot be empty');
@@ -90,5 +88,3 @@ const EditProfileModal: FC<EditProfileModalProps> = (props) => {
 };
 
 export default EditProfileModal;
-
-//autem.
