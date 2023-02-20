@@ -1,23 +1,20 @@
 import React, {FC, memo} from 'react';
-import {Box, HStack, Pressable} from 'native-base';
+import {Box, Pressable} from 'native-base';
 import {Image} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {FlatList} from 'react-native-gesture-handler';
 
 interface UserPostsProps {
   posts: Post[];
 }
 const UserPosts: FC<UserPostsProps> = (props) => {
   const {posts} = props;
-  const navigation =
-    useNavigation<NativeStackNavigationProp<AccountNavigationParamsList>>();
-
-  const onPress = (post: Post) => {
-    navigation.navigate('PostDetail', {post});
-  };
+  const onPress = (post: Post) => {};
   return (
-    <HStack marginTop={'l'} flexWrap={'wrap'}>
-      {posts.map((post) => (
+    <FlatList
+      style={{marginTop: 40}}
+      data={posts}
+      numColumns={3}
+      renderItem={({item: post}) => (
         <Pressable key={post.id} onPress={() => onPress(post)}>
           <Box marginTop={'xxs'} marginX={'xxs'}>
             <Image
@@ -29,8 +26,8 @@ const UserPosts: FC<UserPostsProps> = (props) => {
             />
           </Box>
         </Pressable>
-      ))}
-    </HStack>
+      )}
+    />
   );
 };
 
