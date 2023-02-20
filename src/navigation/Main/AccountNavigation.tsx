@@ -1,6 +1,6 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import {Account, PostDetail} from '../../screens';
+import {Account} from '../../screens';
 import AccountHeader from '../components/AccountHeader';
 
 const AccountNavigation = () => {
@@ -19,7 +19,6 @@ const AccountNavigation = () => {
         },
       }}>
       <Stack.Screen name="Account" component={Account} />
-      <Stack.Screen name="PostDetail" component={PostDetail} />
     </Stack.Navigator>
   );
 };
