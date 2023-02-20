@@ -13,6 +13,7 @@ const Feed = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState<boolean>(false);
   const refreshData = () => {
+    setPosts([]);
     getPosts().then((posts) => {
       AsyncStorage.setItem('posts', JSON.stringify(posts));
       setPosts(posts);
