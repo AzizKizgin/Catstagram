@@ -1,6 +1,5 @@
 import React, {FC, useEffect, useState, memo} from 'react';
-import {Box, FlatList} from 'native-base';
-import {Modal} from 'react-native';
+import {Box, Text} from 'native-base';
 import {useAuth} from '../../../context/AuthContext';
 import {addComment, getComments} from '../../../data/Comments/commentData';
 import Header from '../Header';
@@ -8,7 +7,8 @@ import Comment from '../../Comment';
 import TextInput from '../TextInput';
 import SendButton from '../SendButton';
 import Post from '../../Post';
-
+import Modal from 'react-native-modal';
+import {FlatList, RefreshControl} from 'react-native-gesture-handler';
 interface PostDetailProps {
   isVisible: boolean;
   setIsVisible: (value: boolean) => void;
@@ -21,26 +21,43 @@ const PostDetailModal: FC<PostDetailProps> = (props) => {
   const {user} = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [post, setPost] = useState<Post>();
-  useEffect(() => {
-    setPost(currentPost);
-    getComments(currentPost?.id).then((comments) => setComments(comments));
-  }, [isVisible, currentPost]);
+  const [loading, setLoading] = useState(false);
 
   const closeModal = () => {
+    setIsVisible(false);
     setPost(undefined);
     setComments([]);
-    setIsVisible(false);
   };
   return (
     <Modal
-      animationType="slide"
-      visible={isVisible}
-      onRequestClose={closeModal}>
+      style={{margin: 0}}
+      isVisible={isVisible}
+      onBackButtonPress={closeModal}
+      animationInTiming={100}
+      onModalShow={() => {
+        setPost(currentPost);
+        setLoading(true);
+        getComments(currentPost?.id)
+          .then((comments) => setComments(comments))
+          .then(() => setLoading(false));
+      }}
+      coverScreen={true}>
       {post && (
         <Box flex={1} backgroundColor={'bgDark'}>
           <Header onPress={closeModal} />
           <FlatList
             data={[post]}
+            refreshControl={
+              <RefreshControl
+                refreshing={loading}
+                onRefresh={() => {
+                  setLoading(true);
+                  getComments(post?.id)
+                    .then((comments) => setComments(comments))
+                    .then(() => setLoading(false));
+                }}
+              />
+            }
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item}) => <Post post={item} isDetail={true} />}
             ListFooterComponent={
@@ -56,6 +73,15 @@ const PostDetailModal: FC<PostDetailProps> = (props) => {
                       postId={post.id}
                     />
                   )}
+                  ListEmptyComponent={
+                    <Box
+                      flex={1}
+                      justifyContent={'center'}
+                      alignItems={'center'}
+                      padding={'sm'}>
+                      <Text color={'textDark'}>No comments yet</Text>
+                    </Box>
+                  }
                 />
               </>
             }
