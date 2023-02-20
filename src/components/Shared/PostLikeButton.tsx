@@ -1,5 +1,5 @@
 import {Box, Icon} from 'native-base';
-import React, {useState} from 'react';
+import React, {memo, useState} from 'react';
 import AnimatedPressable from '../AnimatedComponents/AnimatedPressable';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useAuth} from '../../context/AuthContext';
@@ -30,4 +30,4 @@ const PostLikeButton = () => {
   );
 };
 
-export default PostLikeButton;
+export default memo(PostLikeButton);
