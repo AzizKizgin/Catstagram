@@ -10,6 +10,7 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {addComment, getComments} from '../../data/Comments/commentData';
 import theme from '../../../theme';
 import {BackHandler} from 'react-native';
+import {goBack} from '../../utils/helpers';
 
 const Comments = () => {
   const route = useRoute<RouteProp<FeedNavigationParamsList, 'Comments'>>();
@@ -26,17 +27,6 @@ const Comments = () => {
     });
   };
 
-  const goBack = () => {
-    navigation.goBack();
-    navigation.getParent()?.setOptions({
-      tabBarStyle: {
-        backgroundColor: theme.colors.itemBgDark,
-        borderTopColor: theme.colors.itemBgDark,
-        height: 50,
-      },
-    });
-  };
-
   useEffect(() => {
     navigation.getParent()?.setOptions({
       tabBarStyle: {display: 'none'},
@@ -48,7 +38,7 @@ const Comments = () => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
-        goBack();
+        goBack(navigation);
         return true;
       },
     );
@@ -64,7 +54,7 @@ const Comments = () => {
           size="xl"
           color="iconColor"
           marginLeft={'sm'}
-          onPress={goBack}
+          onPress={() => goBack(navigation)}
         />
         <Center flex={1}>
           <Text

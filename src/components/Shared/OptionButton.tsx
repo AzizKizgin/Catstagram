@@ -6,6 +6,7 @@ import theme from '../../../theme';
 import {useAuth} from '../../context/AuthContext';
 import {usePost} from '../../context/PostContext';
 import {deletePost} from '../../data/Posts/postData';
+import {goBack} from '../../utils/helpers';
 
 const OptionButton = () => {
   const {user} = useAuth();
@@ -43,14 +44,7 @@ const OptionButton = () => {
           }
           onPress={() => {
             deletePost(post?.id, user?.uid);
-            navigation.getParent()?.setOptions({
-              tabBarStyle: {
-                backgroundColor: theme.colors.itemBgDark,
-                borderTopColor: theme.colors.itemBgDark,
-                height: 50,
-              },
-            });
-            navigation.goBack();
+            goBack(navigation);
           }}>
           Delete
         </Menu.Item>

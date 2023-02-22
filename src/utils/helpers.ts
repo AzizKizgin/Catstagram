@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {useState} from 'react';
 import {Dimensions, Image} from 'react-native';
+import theme from '../../theme';
 
 export const getImageHeight = (image: string) => {
   const [height, setHeight] = useState(0);
@@ -45,6 +46,17 @@ export const getTimeDifference = (timestamp: string) => {
     default:
       return Math.floor(Number(diff) / 31536000) + ' years ago';
   }
+};
+
+export const goBack = (navigation: any) => {
+  navigation.getParent()?.setOptions({
+    tabBarStyle: {
+      backgroundColor: theme.colors.itemBgDark,
+      borderTopColor: theme.colors.itemBgDark,
+      height: 50,
+    },
+  });
+  navigation.goBack();
 };
 
 export const sendNotification = async (
