@@ -1,15 +1,9 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {Box} from 'native-base';
 import React, {useState, useEffect} from 'react';
 import Header from '../../components/Shared/Header';
 import {useAuth} from '../../context/AuthContext';
-import {
-  getUserById,
-  getUserFallowers,
-  getUserFallowing,
-  getUserPostsCount,
-} from '../../data/Users/userData';
+import {getUserById, getUserPostsCount} from '../../data/Users/userData';
 import AccountInfo from './components/AccountInfo';
 import AccountTop from './components/AccountTop';
 import ActivityButtons from './components/ActivityButtons';
@@ -33,8 +27,7 @@ const Account = () => {
       .orderBy('createdAt', 'desc')
       .where('userId', '==', userId || user?.uid)
       .limit(15)
-      .get()
-      .then((querySnapshot) => {
+      .onSnapshot((querySnapshot) => {
         let posts: Post[] = [];
         querySnapshot.forEach((documentSnapshot) => {
           posts.push(documentSnapshot.data() as Post);
@@ -75,25 +68,11 @@ const Account = () => {
     });
   };
 
+  getUserPostsCount(userId || user?.uid).then((count) => {
+    setPostsCount(count);
+  });
   useEffect(() => {
-    getUserPostsCount(userId || user?.uid).then((count) => {
-      setPostsCount(count);
-    });
     refreshData();
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', async () => {
-      const shouldRefresh = await AsyncStorage.getItem('refreshProfile');
-      if (shouldRefresh !== null && shouldRefresh === 'true') {
-        getPosts();
-        getUserPostsCount(userId || user?.uid).then((count) => {
-          setPostsCount(count);
-        });
-        AsyncStorage.removeItem('refreshProfile');
-      }
-    });
-    return unsubscribe;
   }, []);
 
   return (

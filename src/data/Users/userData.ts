@@ -1,5 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {sendNotification} from '../../utils/helpers';
 import {getPostById} from '../Posts/postData';
 
@@ -41,19 +41,20 @@ export const getUserById = async (userId?: string) => {
 };
 
 export const getUserPostsCount = async (userId?: string) => {
+  const [allPostIds, setAllPostIds] = useState<string[]>([]);
   if (userId) {
-    let allPostIds: string[] = [];
-    await firestore()
-      .collection('users')
-      .doc(userId)
-      .collection('activities')
-      .doc('posts')
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          allPostIds = doc.data()?.posts;
-        }
-      });
+    useEffect(() => {
+      firestore()
+        .collection('users')
+        .doc(userId)
+        .collection('activities')
+        .doc('posts')
+        .onSnapshot((doc) => {
+          if (doc.exists) {
+            setAllPostIds(doc.data()?.posts);
+          }
+        });
+    }, []);
 
     return allPostIds.length;
   }
