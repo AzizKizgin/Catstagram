@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Box, Center, Text} from 'native-base';
 import Post from '../../components/Post';
 import {FlatList, RefreshControl} from 'react-native-gesture-handler';
@@ -14,7 +14,7 @@ const Feed = () => {
   const [lastDoc, setLastDoc] = useState<any>(undefined);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  const getPosts = async () => {
+  const getPosts = useCallback(async () => {
     setRefreshing(true);
     firestore()
       .collection('posts')
@@ -30,16 +30,16 @@ const Feed = () => {
         setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
         setRefreshing(false);
       });
-  };
+  }, []);
 
-  const getMorePosts = () => {
+  const getMorePosts = useCallback(() => {
     if (lastDoc) {
       setLoading(true);
       firestore()
         .collection('posts')
         .orderBy('createdAt', 'desc')
         .startAfter(lastDoc)
-        .limit(5)
+        .limit(15)
         .get()
         .then((querySnapshot) => {
           let newPosts: Post[] = [];
@@ -51,7 +51,7 @@ const Feed = () => {
           setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
         });
     }
-  };
+  }, [lastDoc]);
 
   useEffect(() => {
     getPosts();
