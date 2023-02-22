@@ -12,7 +12,7 @@ const EditProfile: FC<EditProfileProps> = (props) => {
     <Box>
       <Pressable
         onPress={() => setModalVisible(true)}
-        marginTop={'xxl'}
+        marginTop={'m'}
         padding={'s'}
         backgroundColor={'cyan'}
         borderRadius={'xl'}>
