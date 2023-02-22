@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from 'react';
-import {HStack, Button} from 'native-base';
+import {HStack, Button, Icon, Text, Pressable} from 'native-base';
 import {
   fallowUser,
   isTargetFallowingUser,
@@ -8,7 +8,7 @@ import {
 } from '../../../data/Users/userData';
 import {useAuth} from '../../../context/AuthContext';
 import {Alert} from 'react-native';
-
+import Fontisto from 'react-native-vector-icons/MaterialIcons';
 interface ActivityButtonsProps {
   userId: string;
   userToken?: string;
@@ -51,17 +51,28 @@ const ActivityButtons: FC<ActivityButtonsProps> = ({userId, userToken}) => {
   return (
     <HStack justifyContent={'space-evenly'} marginTop={'sm'}>
       {isFallowing ? (
-        <Button
+        <Pressable
+          borderWidth={1}
+          borderColor={'cyan'}
+          padding={'s'}
           width={'45%'}
-          color={'cyan'}
-          variant={'outline'}
+          backgroundColor={'bgDark'}
+          alignItems={'center'}
+          justifyContent={'center'}
+          borderRadius={10}
           onPress={unFallowUser}>
-          Fallowing
-        </Button>
+          <Text color={'textDark'} marginLeft={'s'}>
+            Unfallow
+          </Text>
+        </Pressable>
       ) : (
-        <Button
+        <Pressable
           width={'45%'}
-          color={'cyan'}
+          padding={'s'}
+          backgroundColor={'cyan'}
+          alignItems={'center'}
+          justifyContent={'center'}
+          borderRadius={10}
           onPress={() => {
             fallowUser(
               appUser?.uid,
@@ -72,12 +83,31 @@ const ActivityButtons: FC<ActivityButtonsProps> = ({userId, userToken}) => {
               setIsFallowing(true);
             });
           }}>
-          Fallow
-        </Button>
+          <Text color={'textDark'} marginLeft={'s'}>
+            Fallow
+          </Text>
+        </Pressable>
       )}
-      <Button width={'45%'} color={'cyan'}>
-        Message
-      </Button>
+      <Pressable
+        width={'45%'}
+        padding={'s'}
+        backgroundColor={
+          isTargetFallowing && isFallowing ? 'cyan' : 'blueGreen'
+        }
+        isDisabled={!(isTargetFallowing && isFallowing)}
+        onPress={() => {
+          isTargetFallowing && isFallowing && Alert.alert('coming soon');
+        }}
+        alignItems={'center'}
+        justifyContent={'center'}
+        borderRadius={10}>
+        <HStack justifyContent={'center'} alignItems={'center'}>
+          <Icon as={Fontisto} name="lock" size="21" color="textDark" />
+          <Text color={'textDark'} marginLeft={'s'}>
+            Message
+          </Text>
+        </HStack>
+      </Pressable>
     </HStack>
   );
 };
