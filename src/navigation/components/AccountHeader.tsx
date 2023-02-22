@@ -3,7 +3,7 @@ import {Box, HStack} from 'native-base';
 import HeaderLogo from '../../components/Shared/HeaderLogo';
 import AddPostButton from '../../components/Shared/AddPostButton';
 import {NativeStackHeaderProps} from '@react-navigation/native-stack';
-import MenuButton from '../../components/Shared/MenuButton';
+import AccountMenuButton from '../../components/Shared/AccountMenuButton';
 
 interface AccountHeaderProps {
   props: NativeStackHeaderProps;
@@ -23,7 +23,7 @@ const AccountHeader: FC<AccountHeaderProps> = ({props}) => {
             props.navigation.navigate('AddPost');
           }}
         />
-        <MenuButton />
+        <AccountMenuButton />
       </HStack>
     </Box>
   );
