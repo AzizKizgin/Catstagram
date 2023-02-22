@@ -3,42 +3,86 @@ import {Box, Center, Text} from 'native-base';
 import Post from '../../components/Post';
 import {FlatList, RefreshControl} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
-import {getPosts} from '../../data/Posts/postData';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import theme from '../../../theme';
 import {ActivityIndicator} from 'react-native';
-
+import firestore from '@react-native-firebase/firestore';
 const Feed = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const navigation = useNavigation();
   const [loading, setLoading] = useState<boolean>(false);
-  const refreshData = () => {
-    setPosts([]);
-    getPosts().then((posts) => {
-      AsyncStorage.setItem('posts', JSON.stringify(posts));
-      setPosts(posts);
-    });
+  const [lastDoc, setLastDoc] = useState<any>(undefined);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+
+  const getPosts = () => {
+    setRefreshing(true);
+    firestore()
+      .collection('posts')
+      .orderBy('createdAt', 'desc')
+      .limit(5)
+      .get()
+      .then((querySnapshot) => {
+        let posts: Post[] = [];
+        querySnapshot.forEach((documentSnapshot) => {
+          posts.push(documentSnapshot.data() as Post);
+        });
+        setPosts(posts);
+        setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
+        setRefreshing(false);
+      });
   };
+
+  const getMorePosts = () => {
+    if (lastDoc) {
+      setLoading(true);
+      firestore()
+        .collection('posts')
+        .orderBy('createdAt', 'desc')
+        .startAfter(lastDoc)
+        .limit(5)
+        .get()
+        .then((querySnapshot) => {
+          let newPosts: Post[] = [];
+          querySnapshot.forEach((documentSnapshot) => {
+            newPosts.push(documentSnapshot.data() as Post);
+          });
+          setLoading(false);
+          setPosts((prev) => [...prev, ...newPosts]);
+          setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
+        });
+    }
+  };
+
+  const refreshData = async () => {
+    firestore()
+      .collection('posts')
+      .orderBy('createdAt', 'desc')
+      .limit(5)
+      .get()
+      .then((querySnapshot) => {
+        let posts: Post[] = [];
+        querySnapshot.forEach((documentSnapshot) => {
+          posts.push(documentSnapshot.data() as Post);
+        });
+        setPosts(posts);
+        setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
+      });
+  };
+
+  useEffect(() => {
+    getPosts();
+  }, []);
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      AsyncStorage.getItem('refresh').then((value) => {
-        if (value === 'true') {
-          refreshData();
-          AsyncStorage.setItem('refresh', 'false');
+      AsyncStorage.getItem('refreshFeed').then((refresh) => {
+        if (refresh === 'true') {
+          getPosts();
+          AsyncStorage.removeItem('refreshFeed');
         }
       });
     });
     return unsubscribe;
-  }, []);
-
-  useEffect(() => {
-    AsyncStorage.getItem('posts').then((value) => {
-      if (value) {
-        setPosts(JSON.parse(value));
-      } else {
-        refreshData();
-      }
-    });
   }, []);
 
   return (
@@ -48,19 +92,32 @@ const Feed = () => {
         renderItem={({item}) => <Post post={item} />}
         ListEmptyComponent={
           <Center flex={1}>
-            <ActivityIndicator size="large" color={theme.colors.cyan} />
+            <Text color={'textDark'}>
+              {loading || refreshing ? 'Loading...' : 'No posts to show'}
+            </Text>
           </Center>
         }
         keyExtractor={(item, index) => index.toString()}
-        ListFooterComponent={<Box height={50} />}
+        onEndReachedThreshold={0.5}
+        onEndReached={() => {
+          getMorePosts();
+        }}
+        ListFooterComponent={
+          <Box height={50}>
+            {loading && (
+              <ActivityIndicator size="large" color={theme.colors.cyan} />
+            )}
+          </Box>
+        }
         refreshControl={
           <RefreshControl
             colors={[theme.colors.cyan]}
-            refreshing={loading}
+            refreshing={refreshing}
             onRefresh={async () => {
-              setLoading(true);
-              refreshData();
-              setLoading(false);
+              setRefreshing(true);
+              refreshData().then(() => {
+                setRefreshing(false);
+              });
             }}
           />
         }
