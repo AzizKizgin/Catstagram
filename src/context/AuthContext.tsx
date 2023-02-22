@@ -1,7 +1,7 @@
 import {createContext, useContext, useEffect, useState} from 'react';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {addUserInfo} from '../data/Users/userData';
-
+import messaging from '@react-native-firebase/messaging';
 interface AuthContextProps {
   children: React.ReactNode;
 }
@@ -84,8 +84,9 @@ export const AuthProvider = ({children}: AuthContextProps) => {
           userCredential.user.sendEmailVerification();
           auth().currentUser?.reload();
         })
-        .then(() => {
+        .then(async () => {
           if (auth().currentUser?.uid) {
+            const deviceToken = await messaging().getToken();
             addUserInfo({
               id: auth().currentUser?.uid,
               bio: '',
@@ -93,6 +94,7 @@ export const AuthProvider = ({children}: AuthContextProps) => {
               username: userName,
               image: '',
               createdAt: new Date().getTime().toString(),
+              deviceToken: deviceToken,
             });
           }
         });
