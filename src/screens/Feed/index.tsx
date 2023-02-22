@@ -19,7 +19,7 @@ const Feed = () => {
     firestore()
       .collection('posts')
       .orderBy('createdAt', 'desc')
-      .limit(5)
+      .limit(10)
       .get()
       .then((querySnapshot) => {
         let posts: Post[] = [];
