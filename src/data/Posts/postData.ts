@@ -1,26 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 import {useEffect, useState} from 'react';
-
-export const getPosts = async () => {
-  const allPostsDocs = await firestore().collection('posts').get();
-  const allPosts = allPostsDocs.docs.map((doc) => doc.data());
-  let posts: Post[] = [];
-  allPosts.map((post, index) => {
-    let postObj: Post = {
-      id: allPostsDocs.docs[index].id,
-      userId: post.userId,
-      caption: post.caption,
-      image: post.image,
-      createdAt: post.createdAt,
-      likes: post.likes,
-    };
-    posts.push(postObj);
-  });
-  posts.sort((a, b) => {
-    return Number(b.createdAt) - Number(a.createdAt);
-  });
-  return posts;
-};
 
 export const addPost = async (
   post: Post,
@@ -43,17 +23,23 @@ export const addPost = async (
         .doc(post.userId)
         .collection('activities')
         .doc('posts');
-      userPostDoc.get().then(async (doc) => {
-        if (doc.exists) {
-          await userPostDoc.update({
-            posts: firestore.FieldValue.arrayUnion(postDoc.id),
-          });
-        } else {
-          await userPostDoc.set({
-            posts: firestore.FieldValue.arrayUnion(postDoc.id),
-          });
-        }
-      });
+      userPostDoc
+        .get()
+        .then(async (doc) => {
+          if (doc.exists) {
+            await userPostDoc.update({
+              posts: firestore.FieldValue.arrayUnion(postDoc.id),
+            });
+          } else {
+            await userPostDoc.set({
+              posts: firestore.FieldValue.arrayUnion(postDoc.id),
+            });
+          }
+        })
+        .then(() => {
+          AsyncStorage.setItem('refreshFeed', 'true');
+          AsyncStorage.setItem('refreshProfile', 'true');
+        });
     });
 };
 
@@ -141,4 +127,39 @@ export const getPostById = async (postId?: string) => {
     likes: post?.likes,
   };
   return postObj;
+};
+
+export const deletePost = async (postId?: string, userId?: string) => {
+  if (postId && userId) {
+    await firestore()
+      .collection('posts')
+      .doc(postId)
+      .delete()
+      .then(() => {
+        const userPostDoc = firestore()
+          .collection('users')
+          .doc(userId)
+          .collection('activities')
+          .doc('posts');
+        userPostDoc.get().then(async (doc) => {
+          if (doc.exists) {
+            await userPostDoc
+              .update({
+                posts: firestore.FieldValue.arrayRemove(postId),
+              })
+              .then(() => {
+                AsyncStorage.getItem('posts').then((posts) => {
+                  if (posts) {
+                    let postsArray = JSON.parse(posts);
+                    postsArray = postsArray.filter(
+                      (post: Post) => post.id !== postId,
+                    );
+                    AsyncStorage.setItem('posts', JSON.stringify(postsArray));
+                  }
+                });
+              });
+          }
+        });
+      });
+  }
 };
