@@ -24,8 +24,6 @@ const Account = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const {user} = useAuth();
   const [userInfo, setUserInfo] = useState<User | null>();
-  const [userFallowers, setUserFallowers] = useState<User[]>([]);
-  const [userFallowing, setUserFallowing] = useState<User[]>([]);
   const [lastDoc, setLastDoc] = useState<any>(undefined);
   const [postsCount, setPostsCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
@@ -46,7 +44,7 @@ const Account = () => {
       });
   };
 
-  const getMorePosts = async () => {
+  const getMorePosts = () => {
     if (lastDoc) {
       setLoading(true);
       firestore()
@@ -75,12 +73,6 @@ const Account = () => {
     getUserById(userId || user?.uid).then((user) => {
       setUserInfo(user);
     });
-    getUserFallowers(userId || user?.uid).then((users) => {
-      setUserFallowers(users);
-    });
-    getUserFallowing(userId || user?.uid).then((users) => {
-      setUserFallowing(users);
-    });
   };
 
   useEffect(() => {
@@ -108,11 +100,7 @@ const Account = () => {
     <Box flex={1} backgroundColor={'bgDark'}>
       {userId && userId !== user?.uid && <Header />}
       <Box paddingX={'m'}>
-        <AccountTop
-          postCount={postsCount}
-          fallowerCount={userFallowers.length}
-          fallowingCount={userFallowing.length}
-        />
+        <AccountTop userId={userId || user?.uid} postCount={postsCount} />
         <AccountInfo userInfo={userInfo} />
         {userId && userId !== user?.uid ? (
           <ActivityButtons userId={userId} userToken={userInfo?.deviceToken} />
