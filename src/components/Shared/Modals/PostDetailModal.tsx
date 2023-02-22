@@ -9,22 +9,22 @@ import SendButton from '../SendButton';
 import Post from '../../Post';
 import Modal from 'react-native-modal';
 import {FlatList, RefreshControl} from 'react-native-gesture-handler';
+import {usePostDetailModal} from '../../../context/PostDetailModalContex';
 interface PostDetailProps {
-  isVisible: boolean;
-  setIsVisible: (value: boolean) => void;
   currentPost: Post;
 }
 
 const PostDetailModal: FC<PostDetailProps> = (props) => {
-  const {isVisible, setIsVisible, currentPost} = props;
+  const {currentPost} = props;
   const [text, setText] = useState('');
   const {user} = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [post, setPost] = useState<Post>();
   const [loading, setLoading] = useState(false);
-
+  const {isPostDetailModalVisible: isVisible, closePostDetailModal} =
+    usePostDetailModal();
   const closeModal = () => {
-    setIsVisible(false);
+    closePostDetailModal();
     setPost(undefined);
     setComments([]);
   };
