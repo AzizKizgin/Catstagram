@@ -49,7 +49,7 @@ export const PostProvider = ({children, post}: PostContextProps) => {
         like,
         likes,
         post,
-        isUserLiked: likes.includes(user?.uid || ''),
+        isUserLiked: likes?.includes(user?.uid || ''),
         onCommentPress,
       }}>
       {children}

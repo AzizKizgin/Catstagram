@@ -42,81 +42,83 @@ const PostDetailModal: FC<PostDetailProps> = (props) => {
           .then(() => setLoading(false));
       }}
       coverScreen={true}>
-      {post && (
-        <Box flex={1} backgroundColor={'bgDark'}>
-          <Header onPress={closeModal} />
-          <FlatList
-            data={[post]}
-            refreshControl={
-              <RefreshControl
-                refreshing={loading}
-                onRefresh={() => {
-                  setLoading(true);
-                  getComments(post?.id)
-                    .then((comments) => setComments(comments))
-                    .then(() => setLoading(false));
+      <Box flex={1} backgroundColor={'bgDark'}>
+        <Header onPress={closeModal} />
+        {post && (
+          <Box flex={1}>
+            <FlatList
+              data={[post]}
+              refreshControl={
+                <RefreshControl
+                  refreshing={loading}
+                  onRefresh={() => {
+                    setLoading(true);
+                    getComments(post?.id)
+                      .then((comments) => setComments(comments))
+                      .then(() => setLoading(false));
+                  }}
+                />
+              }
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({item}) => <Post post={item} isDetail={true} />}
+              ListFooterComponent={
+                <>
+                  <FlatList
+                    data={comments}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({item}) => (
+                      <Comment
+                        comment={item}
+                        createdAt={item.createdAt}
+                        key={item.id}
+                        postId={post.id}
+                      />
+                    )}
+                    ListEmptyComponent={
+                      <Box
+                        flex={1}
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                        padding={'sm'}>
+                        <Text color={'textDark'}>No comments yet</Text>
+                      </Box>
+                    }
+                  />
+                </>
+              }
+            />
+            <Box
+              flexDirection={'row'}
+              backgroundColor={'itemBgDark'}
+              padding={'sm'}
+              alignItems={'center'}
+              justifyContent={'space-between'}>
+              <TextInput
+                placeholder={'Add a comment...'}
+                value={text}
+                onChangeText={setText}
+              />
+              <SendButton
+                onPress={() => {
+                  addComment(post?.id, text, user?.uid, user?.displayName);
+                  setComments([
+                    {
+                      id: '',
+                      likes: [],
+                      text,
+                      userId: user?.uid || '',
+                      username: user?.displayName || '',
+                      createdAt: new Date().getTime().toString(),
+                    },
+                    ...comments,
+                  ]);
+                  setText('');
                 }}
               />
-            }
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({item}) => <Post post={item} isDetail={true} />}
-            ListFooterComponent={
-              <>
-                <FlatList
-                  data={comments}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({item}) => (
-                    <Comment
-                      comment={item}
-                      createdAt={item.createdAt}
-                      key={item.id}
-                      postId={post.id}
-                    />
-                  )}
-                  ListEmptyComponent={
-                    <Box
-                      flex={1}
-                      justifyContent={'center'}
-                      alignItems={'center'}
-                      padding={'sm'}>
-                      <Text color={'textDark'}>No comments yet</Text>
-                    </Box>
-                  }
-                />
-              </>
-            }
-          />
-          <Box
-            flexDirection={'row'}
-            backgroundColor={'itemBgDark'}
-            padding={'sm'}
-            alignItems={'center'}
-            justifyContent={'space-between'}>
-            <TextInput
-              placeholder={'Add a comment...'}
-              value={text}
-              onChangeText={setText}
-            />
-            <SendButton
-              onPress={() => {
-                addComment(post?.id, text, user?.uid, user?.displayName);
-                setComments([
-                  {
-                    id: '',
-                    likes: [],
-                    text,
-                    userId: user?.uid || '',
-                    username: user?.displayName || '',
-                    createdAt: new Date().getTime().toString(),
-                  },
-                  ...comments,
-                ]);
-                setText('');
-              }}
-            />
+            </Box>
           </Box>
-        </Box>
-      )}
+        )}
+      </Box>
     </Modal>
   );
 };

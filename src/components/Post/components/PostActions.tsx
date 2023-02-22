@@ -21,7 +21,9 @@ const PostActions: FC<PostActionsProps> = ({isDetail = false}) => {
         </HStack>
         <SaveButton />
       </HStack>
-      {likes.length > 0 && <Text color={'textDark'}>{likes.length} likes</Text>}
+      {likes?.length > 0 && (
+        <Text color={'textDark'}>{likes?.length} likes</Text>
+      )}
     </VStack>
   );
 };
