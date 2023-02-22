@@ -40,22 +40,6 @@ export const getUserById = async (userId?: string) => {
   return null;
 };
 
-export const checkUserLikedPost = async (postId?: string, userId?: string) => {
-  const [liked, setLiked] = useState<boolean>(false);
-  if (postId && userId) {
-    const postDoc = await firestore().collection('posts').doc(postId).get();
-    const post = postDoc.data();
-    if (post) {
-      if (post.likes?.includes(userId)) {
-        setLiked(true);
-      } else {
-        setLiked(false);
-      }
-    }
-  }
-  return liked;
-};
-
 export const getUserPostsCount = async (userId?: string) => {
   if (userId) {
     let allPostIds: string[] = [];
@@ -154,6 +138,26 @@ export const fallowUser = async (
         }
       })
       .then(async () => {
+        const targetUserFallowersDoc = firestore()
+          .collection('users')
+          .doc(followId)
+          .collection('activities')
+          .doc('fallowers');
+
+        targetUserFallowersDoc.get().then(async (doc) => {
+          if (doc.exists) {
+            if (!doc.data()?.fallowers?.includes(userId)) {
+              await targetUserFallowersDoc.update({
+                fallowers: firestore.FieldValue.arrayUnion(userId),
+              });
+            }
+          } else {
+            await targetUserFallowersDoc.set({
+              fallowers: firestore.FieldValue.arrayUnion(userId),
+            });
+          }
+        });
+
         const targetUserFallowRequestDoc = firestore()
           .collection('users')
           .doc(followId)
