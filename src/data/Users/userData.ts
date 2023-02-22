@@ -56,8 +56,7 @@ export const checkUserLikedPost = async (postId?: string, userId?: string) => {
   return liked;
 };
 
-export const getUserPosts = async (userId?: string) => {
-  const allPosts: Post[] = [];
+export const getUserPostsCount = async (userId?: string) => {
   if (userId) {
     let allPostIds: string[] = [];
     await firestore()
@@ -71,20 +70,10 @@ export const getUserPosts = async (userId?: string) => {
           allPostIds = doc.data()?.posts;
         }
       });
-    if (allPostIds) {
-      for (let i = 0; i < allPostIds.length; i++) {
-        const post = await getPostById(allPostIds[i]);
-        if (post) {
-          allPosts.push(post);
-        }
-      }
-    }
-    allPosts.sort((a, b) => {
-      return Number(b.createdAt) - Number(a.createdAt);
-    });
-    return allPosts;
+
+    return allPostIds.length;
   }
-  return [];
+  return 0;
 };
 
 export const updateUserInfo = async (
