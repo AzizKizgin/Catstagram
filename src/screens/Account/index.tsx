@@ -8,13 +8,14 @@ import {
   getUserById,
   getUserFallowers,
   getUserFallowing,
-  getUserPosts,
+  getUserPostsCount,
 } from '../../data/Users/userData';
 import AccountInfo from './components/AccountInfo';
 import AccountTop from './components/AccountTop';
 import ActivityButtons from './components/ActivityButtons';
 import EditProfile from './components/EditProfile';
 import UserPosts from './components/UserPosts';
+import firestore from '@react-native-firebase/firestore';
 
 const Account = () => {
   const route = useRoute<RouteProp<{params: {userId: string}}>>();
@@ -25,12 +26,52 @@ const Account = () => {
   const [userInfo, setUserInfo] = useState<User | null>();
   const [userFallowers, setUserFallowers] = useState<User[]>([]);
   const [userFallowing, setUserFallowing] = useState<User[]>([]);
+  const [lastDoc, setLastDoc] = useState<any>(undefined);
+  const [postsCount, setPostsCount] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const getPosts = async () => {
+    firestore()
+      .collection('posts')
+      .orderBy('createdAt', 'desc')
+      .where('userId', '==', userId || user?.uid)
+      .limit(15)
+      .get()
+      .then((querySnapshot) => {
+        let posts: Post[] = [];
+        querySnapshot.forEach((documentSnapshot) => {
+          posts.push(documentSnapshot.data() as Post);
+        });
+        setPosts(posts);
+        setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
+      });
+  };
+
+  const getMorePosts = async () => {
+    if (lastDoc) {
+      setLoading(true);
+      firestore()
+        .collection('posts')
+        .orderBy('createdAt', 'desc')
+        .where('userId', '==', userId || user?.uid)
+        .startAfter(lastDoc)
+        .limit(15)
+        .get()
+        .then((querySnapshot) => {
+          let newPosts: Post[] = [];
+          querySnapshot.forEach((documentSnapshot) => {
+            newPosts.push(documentSnapshot.data() as Post);
+          });
+          setPosts([...posts, ...newPosts]);
+          setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
+    }
+  };
 
   const refreshData = () => {
-    getUserPosts(userId || user?.uid).then((posts) => {
-      setPosts(posts);
-      console.log(posts.length);
-    });
+    getPosts();
     getUserById(userId || user?.uid).then((user) => {
       setUserInfo(user);
     });
@@ -43,20 +84,22 @@ const Account = () => {
   };
 
   useEffect(() => {
-    console.log(posts.length);
+    getUserPostsCount(userId || user?.uid).then((count) => {
+      setPostsCount(count);
+    });
     refreshData();
   }, []);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      AsyncStorage.getItem('refreshProfile').then((refresh) => {
-        if (refresh === 'true') {
-          getUserPosts(userId || user?.uid).then((posts) => {
-            setPosts(posts);
-          });
-          AsyncStorage.removeItem('refreshProfile');
-        }
-      });
+    const unsubscribe = navigation.addListener('focus', async () => {
+      const shouldRefresh = await AsyncStorage.getItem('refreshProfile');
+      if (shouldRefresh !== null && shouldRefresh === 'true') {
+        getPosts();
+        getUserPostsCount(userId || user?.uid).then((count) => {
+          setPostsCount(count);
+        });
+        AsyncStorage.removeItem('refreshProfile');
+      }
     });
     return unsubscribe;
   }, []);
@@ -66,7 +109,7 @@ const Account = () => {
       {userId && userId !== user?.uid && <Header />}
       <Box paddingX={'m'}>
         <AccountTop
-          postCount={posts.length}
+          postCount={postsCount}
           fallowerCount={userFallowers.length}
           fallowingCount={userFallowing.length}
         />
@@ -77,7 +120,12 @@ const Account = () => {
           <EditProfile userInfo={userInfo} />
         )}
       </Box>
-      <UserPosts posts={posts} />
+      <UserPosts
+        posts={posts}
+        getMorePosts={getMorePosts}
+        getPosts={getPosts}
+        loading={loading}
+      />
     </Box>
   );
 };

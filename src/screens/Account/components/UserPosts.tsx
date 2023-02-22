@@ -1,16 +1,21 @@
 import React, {FC, memo, useState} from 'react';
 import {Box, Pressable} from 'native-base';
-import {Image} from 'react-native';
-import {FlatList} from 'react-native-gesture-handler';
+import {ActivityIndicator, Image} from 'react-native';
+import {FlatList, RefreshControl} from 'react-native-gesture-handler';
 import PostDetailModal from '../../../components/Shared/Modals/PostDetailModal';
+import theme from '../../../../theme';
 
 interface UserPostsProps {
   posts: Post[];
+  getMorePosts: () => void;
+  getPosts: () => Promise<void>;
+  loading: boolean;
 }
 const UserPosts: FC<UserPostsProps> = (props) => {
-  const {posts} = props;
+  const {posts, getMorePosts, getPosts, loading} = props;
   const [modalVisible, setModalVisible] = useState(false);
   const [id, setId] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
   const onPress = (index: number) => {
     setId(index);
     setModalVisible(true);
@@ -21,6 +26,9 @@ const UserPosts: FC<UserPostsProps> = (props) => {
         style={{marginTop: 40}}
         data={posts}
         numColumns={3}
+        onEndReached={() => {
+          getMorePosts();
+        }}
         renderItem={({item: post, index}) => (
           <Pressable key={post.id} onPress={() => onPress(index)}>
             <Box marginTop={'xxs'} marginX={'xxs'}>
@@ -34,6 +42,25 @@ const UserPosts: FC<UserPostsProps> = (props) => {
             </Box>
           </Pressable>
         )}
+        refreshControl={
+          <RefreshControl
+            colors={[theme.colors.cyan]}
+            refreshing={refreshing}
+            onRefresh={async () => {
+              setRefreshing(true);
+              getPosts().then(() => {
+                setRefreshing(false);
+              });
+            }}
+          />
+        }
+        ListFooterComponent={
+          <Box height={50} marginTop={'xs'}>
+            {loading && (
+              <ActivityIndicator size="large" color={theme.colors.cyan} />
+            )}
+          </Box>
+        }
       />
       <PostDetailModal
         isVisible={modalVisible}
