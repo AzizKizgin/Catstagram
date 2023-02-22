@@ -14,7 +14,7 @@ const Feed = () => {
   const [lastDoc, setLastDoc] = useState<any>(undefined);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  const getPosts = () => {
+  const getPosts = async () => {
     setRefreshing(true);
     firestore()
       .collection('posts')
@@ -51,22 +51,6 @@ const Feed = () => {
           setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
         });
     }
-  };
-
-  const refreshData = async () => {
-    firestore()
-      .collection('posts')
-      .orderBy('createdAt', 'desc')
-      .limit(5)
-      .get()
-      .then((querySnapshot) => {
-        let posts: Post[] = [];
-        querySnapshot.forEach((documentSnapshot) => {
-          posts.push(documentSnapshot.data() as Post);
-        });
-        setPosts(posts);
-        setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
-      });
   };
 
   useEffect(() => {
@@ -115,7 +99,7 @@ const Feed = () => {
             refreshing={refreshing}
             onRefresh={async () => {
               setRefreshing(true);
-              refreshData().then(() => {
+              getPosts().then(() => {
                 setRefreshing(false);
               });
             }}
