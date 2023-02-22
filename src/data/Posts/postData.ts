@@ -143,21 +143,9 @@ export const deletePost = async (postId?: string, userId?: string) => {
           .doc('posts');
         userPostDoc.get().then(async (doc) => {
           if (doc.exists) {
-            await userPostDoc
-              .update({
-                posts: firestore.FieldValue.arrayRemove(postId),
-              })
-              .then(() => {
-                AsyncStorage.getItem('posts').then((posts) => {
-                  if (posts) {
-                    let postsArray = JSON.parse(posts);
-                    postsArray = postsArray.filter(
-                      (post: Post) => post.id !== postId,
-                    );
-                    AsyncStorage.setItem('posts', JSON.stringify(postsArray));
-                  }
-                });
-              });
+            await userPostDoc.update({
+              posts: firestore.FieldValue.arrayRemove(postId),
+            });
           }
         });
       });
