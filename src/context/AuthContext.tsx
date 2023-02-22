@@ -2,6 +2,8 @@ import {createContext, useContext, useEffect, useState} from 'react';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {addUserInfo} from '../data/Users/userData';
 import messaging from '@react-native-firebase/messaging';
+import {Alert} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 interface AuthContextProps {
   children: React.ReactNode;
 }
@@ -24,7 +26,7 @@ interface ResetPasswordProps {
 interface AuthContextType {
   user: FirebaseAuthTypes.User | null;
   login: ({email, password, setErrors}: LoginProps) => void;
-  logout: (setErrors: (errors: any) => void) => void;
+  logout: () => void;
   register: ({email, password, userName, setErrors}: RegisterProps) => void;
   resetPassword: ({email, setErrors}: ResetPasswordProps) => void;
 }
@@ -59,12 +61,13 @@ export const AuthProvider = ({children}: AuthContextProps) => {
     }
   };
 
-  const logout = async (setErrors: (errors: any) => void) => {
+  const logout = async () => {
     try {
       await auth().signOut();
+      AsyncStorage.clear();
       setUser(null);
     } catch (error) {
-      setErrors(error);
+      Alert.alert('Error', 'Something went wrong');
     }
   };
 
