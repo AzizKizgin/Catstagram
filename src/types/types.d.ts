@@ -28,6 +28,7 @@ type User = {
   image: string;
   bio: string;
   createdAt: string;
+  deviceToken?: string;
 };
 
 type Comment = {

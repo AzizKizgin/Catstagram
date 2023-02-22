@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {useState} from 'react';
 import {Dimensions, Image} from 'react-native';
 
@@ -44,4 +45,35 @@ export const getTimeDifference = (timestamp: string) => {
     default:
       return Math.floor(Number(diff) / 31536000) + ' years ago';
   }
+};
+
+export const sendNotification = async (
+  notification?: string,
+  title?: string,
+  targetToken?: string,
+) => {
+  axios
+    .post(
+      'https://fcm.googleapis.com/fcm/send',
+      {
+        to: targetToken,
+        notification: {
+          title: title,
+          body: notification,
+        },
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization:
+            'key=AAAACy4oxVc:APA91bEk8q7J-0H4uku1st0vX-3nDaTWA1EO5G5SEmcVh0RCufejYzXhKLyotHR8pndioGq6gB-a3askaCOOn3Vz4q4p8tYQkL2xLbWTD8Xah7wbK2-ppk0PFPB4EEFoiC1n0fzpQJLW',
+        },
+      },
+    )
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
