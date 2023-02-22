@@ -290,7 +290,7 @@ export const isTargetFallowingUser = async (
   userId?: string,
   followId?: string,
 ) => {
-  const [isFallowing, setIsFallowing] = useState<boolean>(false);
+  let isFallowing = false;
   if (userId && followId) {
     const fallowDoc = await firestore()
       .collection('users')
@@ -300,9 +300,9 @@ export const isTargetFallowingUser = async (
       .get();
     if (fallowDoc.exists) {
       if (fallowDoc.data()?.follows?.includes(userId)) {
-        setIsFallowing(true);
+        isFallowing = true;
       } else {
-        setIsFallowing(false);
+        isFallowing = false;
       }
     }
   }
