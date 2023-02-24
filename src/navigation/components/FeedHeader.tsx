@@ -18,11 +18,6 @@ const FeedHeader: FC<FeedHeaderProps> = ({props}) => {
       justifyContent={'space-between'}>
       <HeaderLogo />
       <HStack space={1}>
-        <AddPostButton
-          onPress={() => {
-            props.navigation.navigate('AddPost');
-          }}
-        />
         <MessageButton />
       </HStack>
     </Box>
