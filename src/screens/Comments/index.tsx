@@ -7,10 +7,11 @@ import TextInput from '../../components/Shared/TextInput';
 import {useAuth} from '../../context/AuthContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import {addComment, getComments} from '../../data/Comments/commentData';
+import {addComment} from '../../data/Comments/commentData';
 import theme from '../../../theme';
 import {BackHandler} from 'react-native';
 import {goBack} from '../../utils/helpers';
+import firestore from '@react-native-firebase/firestore';
 
 const Comments = () => {
   const route = useRoute<RouteProp<FeedNavigationParamsList, 'Comments'>>();
@@ -20,11 +21,31 @@ const Comments = () => {
   const [comments, setComments] = useState<Comment[]>([]);
   const {user} = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [newComment, setNewComment] = useState<Comment[]>([]);
   const getPostComments = () => {
-    getComments(postId).then((comments) => {
-      setComments(comments);
-    });
+    setLoading(true);
+    firestore()
+      .collection('posts')
+      .doc(postId)
+      .collection('activities')
+      .doc('postComments')
+      .collection('comments')
+      .orderBy('likes', 'desc')
+      .get()
+      .then((querySnapshot) => {
+        let comments: Comment[] = [];
+        querySnapshot.forEach((documentSnapshot) => {
+          comments.push(documentSnapshot.data() as Comment);
+        });
+        const userComments = comments.filter(
+          (comment) => comment.userId === user?.uid,
+        );
+        const filteredComment = comments.filter(
+          (comment) => comment.userId !== user?.uid,
+        );
+        setComments([...userComments, ...filteredComment]);
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -66,12 +87,13 @@ const Comments = () => {
           </Text>
         </Center>
       </Box>
+      {newComment.map((comment, index) => (
+        <Comment comment={comment} postId={postId} key={index} />
+      ))}
       <FlatList
         data={comments}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({item}) => (
-          <Comment comment={item} createdAt={item.createdAt} postId={postId} />
-        )}
+        keyExtractor={(item, index) => item.id as string}
+        renderItem={({item}) => <Comment comment={item} postId={postId} />}
         refreshControl={
           <RefreshControl
             colors={[theme.colors.cyan]}
@@ -79,6 +101,7 @@ const Comments = () => {
             onRefresh={async () => {
               setLoading(true);
               setComments([]);
+              setNewComment([]);
               getPostComments();
               setLoading(false);
             }}
@@ -113,7 +136,7 @@ const Comments = () => {
               id: '',
               likes: [],
             };
-            setComments([newComment, ...comments]);
+            setNewComment((prev) => [newComment, ...prev]);
           }}
         />
       </Box>
