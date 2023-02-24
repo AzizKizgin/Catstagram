@@ -61,6 +61,8 @@ const Feed = () => {
     const unsubscribe = navigation.addListener('focus', () => {
       AsyncStorage.getItem('refreshFeed').then((refresh) => {
         if (refresh === 'true') {
+          setPosts([]);
+          setLastDoc(undefined);
           getPosts();
           AsyncStorage.removeItem('refreshFeed');
         }
