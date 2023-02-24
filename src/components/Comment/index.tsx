@@ -9,28 +9,29 @@ import UserImage from '../User/components/UserImage';
 
 interface CommentProps {
   comment: Comment;
-  createdAt: string;
   postId?: string;
 }
 
 const Comment: FC<CommentProps> = (props) => {
-  const {comment, createdAt, postId} = props;
+  const {comment, postId} = props;
   const [likes, setLikes] = useState<string[]>([]);
   const {user} = useAuth();
   const diff =
-    getTimeDifference(createdAt).split(' ')[0] +
-    getTimeDifference(createdAt).split(' ')[1].charAt(0);
+    getTimeDifference(comment.createdAt).split(' ')[0] +
+    getTimeDifference(comment.createdAt).split(' ')[1].charAt(0);
   const onPress = () => {
-    likeComment(postId, comment.id, comment.userId);
-    if (likes.includes(user?.uid as string)) {
-      setLikes(likes.filter((like) => like !== (user?.uid as string)));
-    } else {
-      setLikes([...likes, user?.uid as string]);
+    likeComment(postId, comment.id, user?.uid);
+    if (comment.userId === user?.uid) {
+      if (likes.includes(user?.uid as string)) {
+        setLikes(likes.filter((like) => like !== (user?.uid as string)));
+      } else {
+        setLikes([...likes, user?.uid as string]);
+      }
     }
   };
-  useEffect(() => {
-    getCommentLikes(postId, comment.id).then((likes) => setLikes(likes));
-  }, []);
+
+  getCommentLikes(postId, comment.id).then((likes) => setLikes(likes));
+
   return (
     <HStack
       justifyContent={'space-between'}
@@ -57,13 +58,7 @@ const Comment: FC<CommentProps> = (props) => {
         </Box>
       </HStack>
       <VStack alignItems={'center'}>
-        <CommentLikeButton
-          size={'md'}
-          onPress={onPress}
-          id={comment.id}
-          isUserLiked={likes.includes(comment.userId)}
-        />
-        <Text color={'gray.400'}>{likes.length > 0 && likes.length}</Text>
+        <CommentLikeButton size={'md'} onPress={onPress} likes={likes} />
       </VStack>
     </HStack>
   );
