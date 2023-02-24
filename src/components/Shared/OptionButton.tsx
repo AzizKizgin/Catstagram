@@ -31,9 +31,7 @@ const OptionButton = () => {
         }}>
         <Menu.Item
           _text={{color: 'textDark', fontSize: 'sm'}}
-          onPress={() => {
-            closePostDetailModal();
-          }}>
+          onPress={() => {}}>
           Download Image
         </Menu.Item>
         <Menu.Item
