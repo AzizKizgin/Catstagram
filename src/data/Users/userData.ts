@@ -33,6 +33,7 @@ export const getUserById = async (userId?: string) => {
         image: user.image,
         bio: user.bio,
         createdAt: user.createdAt,
+        deviceToken: user.deviceToken,
       };
       return userObj;
     }
@@ -110,30 +111,30 @@ export const getUserLikedPosts = async (userId?: string) => {
   return [];
 };
 
-export const fallowUser = async (
+export const followUser = async (
   userId?: string,
   userName?: string,
   followId?: string,
-  fallowDeviceToken?: string,
+  followDeviceToken?: string,
 ) => {
   if (userId && followId) {
-    const fallowDoc = firestore()
+    const followDoc = firestore()
       .collection('users')
       .doc(userId)
       .collection('activities')
       .doc('follows');
 
-    fallowDoc
+    followDoc
       .get()
       .then(async (doc) => {
         if (doc.exists) {
           if (!doc.data()?.follows?.includes(followId)) {
-            await fallowDoc.update({
+            await followDoc.update({
               follows: firestore.FieldValue.arrayUnion(followId),
             });
           }
         } else {
-          await fallowDoc.set({
+          await followDoc.set({
             follows: firestore.FieldValue.arrayUnion(followId),
           });
         }
@@ -143,18 +144,18 @@ export const fallowUser = async (
           .collection('users')
           .doc(followId)
           .collection('activities')
-          .doc('fallowers');
+          .doc('followers');
 
         targetUserFallowersDoc.get().then(async (doc) => {
           if (doc.exists) {
-            if (!doc.data()?.fallowers?.includes(userId)) {
+            if (!doc.data()?.followers?.includes(userId)) {
               await targetUserFallowersDoc.update({
-                fallowers: firestore.FieldValue.arrayUnion(userId),
+                followers: firestore.FieldValue.arrayUnion(userId),
               });
             }
           } else {
             await targetUserFallowersDoc.set({
-              fallowers: firestore.FieldValue.arrayUnion(userId),
+              followers: firestore.FieldValue.arrayUnion(userId),
             });
           }
         });
@@ -163,28 +164,29 @@ export const fallowUser = async (
           .collection('users')
           .doc(followId)
           .collection('activities')
-          .doc('fallowRequests');
+          .doc('followRequests');
         targetUserFallowRequestDoc
           .get()
           .then(async (doc) => {
             if (doc.exists) {
-              if (!doc.data()?.fallowRequests?.includes(userId)) {
+              if (!doc.data()?.followRequests?.includes(userId)) {
                 await targetUserFallowRequestDoc.update({
-                  fallowRequests: firestore.FieldValue.arrayUnion(userId),
+                  followRequests: firestore.FieldValue.arrayUnion(userId),
                 });
               }
             } else {
               await targetUserFallowRequestDoc.set({
-                fallowRequests: firestore.FieldValue.arrayUnion(userId),
+                followRequests: firestore.FieldValue.arrayUnion(userId),
               });
             }
           })
-          .then(async () => {
-            if (fallowDeviceToken) {
+          .then(() => {
+            if (followDeviceToken) {
+              console.log('first');
               sendNotification(
-                fallowDeviceToken,
+                followDeviceToken,
                 'New Fallow',
-                `${userName} just fallowed you`,
+                `${userName} just followed you`,
               );
             }
           });
@@ -192,18 +194,18 @@ export const fallowUser = async (
   }
 };
 
-export const unfallowUser = async (userId?: string, followId?: string) => {
+export const unfollowUser = async (userId?: string, followId?: string) => {
   if (userId && followId) {
-    const fallowDoc = firestore()
+    const followDoc = firestore()
       .collection('users')
       .doc(userId)
       .collection('activities')
       .doc('follows');
 
-    fallowDoc.get().then(async (doc) => {
+    followDoc.get().then(async (doc) => {
       if (doc.exists) {
         if (doc.data()?.follows?.includes(followId)) {
-          await fallowDoc.update({
+          await followDoc.update({
             follows: firestore.FieldValue.arrayRemove(followId),
           });
         }
@@ -220,11 +222,11 @@ export const getUserFallowers = async (userId?: string) => {
       .collection('users')
       .doc(userId)
       .collection('activities')
-      .doc('fallowers')
+      .doc('followers')
       .get()
       .then((doc) => {
         if (doc.exists) {
-          allFallowersIds = doc.data()?.fallowers;
+          allFallowersIds = doc.data()?.followers;
         }
       });
     if (allFallowersIds) {
@@ -274,14 +276,14 @@ export const isUserFallowingTarget = async (
 ) => {
   let isFallowing = false;
   if (userId && followId) {
-    const fallowDoc = await firestore()
+    const followDoc = await firestore()
       .collection('users')
       .doc(userId)
       .collection('activities')
       .doc('follows')
       .get();
-    if (fallowDoc.exists) {
-      if (fallowDoc.data()?.follows?.includes(followId)) {
+    if (followDoc.exists) {
+      if (followDoc.data()?.follows?.includes(followId)) {
         isFallowing = true;
       } else {
         isFallowing = false;
@@ -297,14 +299,14 @@ export const isTargetFallowingUser = async (
 ) => {
   let isFallowing = false;
   if (userId && followId) {
-    const fallowDoc = await firestore()
+    const followDoc = await firestore()
       .collection('users')
       .doc(followId)
       .collection('activities')
       .doc('follows')
       .get();
-    if (fallowDoc.exists) {
-      if (fallowDoc.data()?.follows?.includes(userId)) {
+    if (followDoc.exists) {
+      if (followDoc.data()?.follows?.includes(userId)) {
         isFallowing = true;
       } else {
         isFallowing = false;
@@ -322,11 +324,11 @@ export const getFallowRequests = async (userId?: string) => {
       .collection('users')
       .doc(userId)
       .collection('activities')
-      .doc('fallowRequests')
+      .doc('followRequests')
       .get()
       .then((doc) => {
         if (doc.exists) {
-          allFallowRequestsIds = doc.data()?.fallowRequests;
+          allFallowRequestsIds = doc.data()?.followRequests;
         }
       });
     if (allFallowRequestsIds) {
@@ -346,19 +348,19 @@ export const acceptFallowRequest = async (
   userId?: string,
   userName?: string,
   followId?: string,
-  fallowDeviceToken?: string,
+  followDeviceToken?: string,
 ) => {
-  fallowUser(userId, userName, followId, fallowDeviceToken).then(() => {
-    const fallowRequestDoc = firestore()
+  followUser(userId, userName, followId, followDeviceToken).then(() => {
+    const followRequestDoc = firestore()
       .collection('users')
       .doc(userId)
       .collection('activities')
-      .doc('fallowRequests');
-    fallowRequestDoc.get().then(async (doc) => {
+      .doc('followRequests');
+    followRequestDoc.get().then(async (doc) => {
       if (doc.exists) {
-        if (doc.data()?.fallowRequests?.includes(followId)) {
-          await fallowRequestDoc.update({
-            fallowRequests: firestore.FieldValue.arrayRemove(followId),
+        if (doc.data()?.followRequests?.includes(followId)) {
+          await followRequestDoc.update({
+            followRequests: firestore.FieldValue.arrayRemove(followId),
           });
         }
       }
@@ -370,16 +372,16 @@ export const declineFallowRequest = async (
   userId?: string,
   followId?: string,
 ) => {
-  const fallowRequestDoc = firestore()
+  const followRequestDoc = firestore()
     .collection('users')
     .doc(userId)
     .collection('activities')
-    .doc('fallowRequests');
-  fallowRequestDoc.get().then(async (doc) => {
+    .doc('followRequests');
+  followRequestDoc.get().then(async (doc) => {
     if (doc.exists) {
-      if (doc.data()?.fallowRequests?.includes(followId)) {
-        await fallowRequestDoc.update({
-          fallowRequests: firestore.FieldValue.arrayRemove(followId),
+      if (doc.data()?.followRequests?.includes(followId)) {
+        await followRequestDoc.update({
+          followRequests: firestore.FieldValue.arrayRemove(followId),
         });
       }
     }

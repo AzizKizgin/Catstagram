@@ -1,10 +1,10 @@
 import React, {FC, useEffect, useState} from 'react';
 import {HStack, Button, Icon, Text, Pressable} from 'native-base';
 import {
-  fallowUser,
+  followUser,
   isTargetFallowingUser,
   isUserFallowingTarget,
-  unfallowUser,
+  unfollowUser,
 } from '../../../data/Users/userData';
 import {useAuth} from '../../../context/AuthContext';
 import {Alert} from 'react-native';
@@ -20,8 +20,8 @@ const ActivityButtons: FC<ActivityButtonsProps> = ({userId, userToken}) => {
   const {user: appUser} = useAuth();
   const unFallowUser = () => {
     Alert.alert(
-      'Unfallow User',
-      'Are you sure you want to unfallow this user?',
+      'Unfollow User',
+      'Are you sure you want to unfollow this user?',
       [
         {
           text: 'Cancel',
@@ -31,7 +31,7 @@ const ActivityButtons: FC<ActivityButtonsProps> = ({userId, userToken}) => {
         {
           text: 'OK',
           onPress: () => {
-            unfallowUser(appUser?.uid, userId).then(() => {
+            unfollowUser(appUser?.uid, userId).then(() => {
               setIsFallowing(false);
             });
           },
@@ -62,7 +62,7 @@ const ActivityButtons: FC<ActivityButtonsProps> = ({userId, userToken}) => {
           borderRadius={10}
           onPress={unFallowUser}>
           <Text color={'textDark'} marginLeft={'s'}>
-            Unfallow
+            Unfollow
           </Text>
         </Pressable>
       ) : (
@@ -74,7 +74,8 @@ const ActivityButtons: FC<ActivityButtonsProps> = ({userId, userToken}) => {
           justifyContent={'center'}
           borderRadius={10}
           onPress={() => {
-            fallowUser(
+            console.log(appUser?.uid, appUser?.displayName, userId, userToken);
+            followUser(
               appUser?.uid,
               appUser?.displayName || '',
               userId,
