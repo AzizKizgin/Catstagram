@@ -2,9 +2,7 @@ import React, {FC, memo, useState} from 'react';
 import {Box, Pressable} from 'native-base';
 import {ActivityIndicator, Image} from 'react-native';
 import {FlatList, RefreshControl} from 'react-native-gesture-handler';
-import PostDetailModal from '../../../components/Shared/Modals/PostDetailModal';
 import theme from '../../../../theme';
-import {PostDetailModalProvider} from '../../../context/PostDetailModalContex';
 
 interface UserPostsProps {
   posts: Post[];
@@ -63,11 +61,6 @@ const UserPosts: FC<UserPostsProps> = (props) => {
           </Box>
         }
       />
-      <PostDetailModalProvider
-        isModalVisible={modalVisible}
-        setIsModalVisible={setModalVisible}>
-        <PostDetailModal currentPost={posts[id]} />
-      </PostDetailModalProvider>
     </>
   );
 };
