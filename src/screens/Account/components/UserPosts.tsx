@@ -12,13 +12,8 @@ interface UserPostsProps {
 }
 const UserPosts: FC<UserPostsProps> = (props) => {
   const {posts, getMorePosts, getPosts, loading} = props;
-  const [modalVisible, setModalVisible] = useState(false);
-  const [id, setId] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
-  const onPress = (index: number) => {
-    setId(index);
-    setModalVisible(true);
-  };
+
   return (
     <>
       <FlatList
@@ -29,7 +24,7 @@ const UserPosts: FC<UserPostsProps> = (props) => {
           getMorePosts();
         }}
         renderItem={({item: post, index}) => (
-          <Pressable key={post.id} onPress={() => onPress(index)}>
+          <Pressable key={post.id} onPress={() => {}}>
             <Box marginTop={'xxs'} marginX={'xxs'}>
               <Image
                 source={{

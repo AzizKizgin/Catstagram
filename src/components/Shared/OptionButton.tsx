@@ -1,17 +1,15 @@
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 import {Box, Icon, Menu, Pressable} from 'native-base';
 import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useAuth} from '../../context/AuthContext';
 import {usePost} from '../../context/PostContext';
-import {usePostDetailModal} from '../../context/PostDetailModalContex';
 import {deletePost} from '../../data/Posts/postData';
 
 const OptionButton = () => {
   const {user} = useAuth();
   const {post} = usePost();
   const route = useRoute();
-  const {closePostDetailModal} = usePostDetailModal();
   return (
     <Box alignItems="center">
       <Menu
@@ -46,9 +44,7 @@ const OptionButton = () => {
               : 'none'
           }
           onPress={() => {
-            deletePost(post?.id, user?.uid).then(() => {
-              closePostDetailModal();
-            });
+            deletePost(post?.id, user?.uid).then(() => {});
           }}>
           Delete
         </Menu.Item>
