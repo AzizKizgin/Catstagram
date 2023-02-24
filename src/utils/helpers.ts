@@ -60,9 +60,9 @@ export const goBack = (navigation: any) => {
 };
 
 export const sendNotification = async (
+  targetToken?: string,
   notification?: string,
   title?: string,
-  targetToken?: string,
 ) => {
   axios
     .post(
