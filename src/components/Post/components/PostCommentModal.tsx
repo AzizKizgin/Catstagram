@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, memo, useEffect, useState} from 'react';
 import {Box, Center, Text} from 'native-base';
 import Modal from 'react-native-modal';
 import Header from '../../Shared/Header';
@@ -10,6 +10,7 @@ import theme from '../../../../theme';
 import TextInput from '../../Shared/TextInput';
 import SendButton from '../../Shared/SendButton';
 import {addComment} from '../../../data/Comments/commentData';
+import {ActivityIndicator} from 'react-native';
 
 interface PostCommentModalProps {
   modalVisible: boolean;
@@ -19,13 +20,13 @@ interface PostCommentModalProps {
 const PostCommentModal: FC<PostCommentModalProps> = (props) => {
   const {modalVisible, setModalVisible, postId} = props;
   const [loading, setLoading] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [newComment, setNewComment] = useState<Comment[]>([]);
   const [allComments, setAllComments] = useState<Comment[]>([]);
   const [text, setText] = useState('');
   const {user} = useAuth();
 
   const getUserComments = async () => {
-    let comments: Comment[] = [];
     firestore()
       .collection('posts')
       .doc(postId)
@@ -33,44 +34,50 @@ const PostCommentModal: FC<PostCommentModalProps> = (props) => {
       .doc('postComments')
       .collection('comments')
       .where('userId', '==', user?.uid)
-      .orderBy('likes', 'desc')
       .get()
       .then((querySnapshot) => {
+        let comments: Comment[] = [];
         querySnapshot.forEach((documentSnapshot) => {
           comments.push(documentSnapshot.data() as Comment);
         });
+        comments.sort((a, b) => {
+          if (b.likes && a.likes) {
+            return b.likes.length - a.likes.length;
+          }
+          return 0;
+        });
+        setAllComments(comments);
       });
-    return comments;
   };
 
   const getAllComments = async () => {
-    let comments: Comment[] = [];
     firestore()
       .collection('posts')
       .doc(postId)
       .collection('activities')
       .doc('postComments')
       .collection('comments')
-      .orderBy('likes', 'desc')
       .where('userId', '!=', user?.uid)
       .get()
       .then((querySnapshot) => {
+        let comments: Comment[] = [];
         querySnapshot.forEach((documentSnapshot) => {
           comments.push(documentSnapshot.data() as Comment);
         });
+        comments.sort((a, b) => {
+          if (b.likes && a.likes) {
+            return b.likes.length - a.likes.length;
+          }
+          return 0;
+        });
+        setAllComments((prev) => [...prev, ...comments]);
       });
-    return comments;
   };
 
   const getPostComments = async () => {
-    setLoading(true);
-    getUserComments()
-      .then((comments) => setAllComments(comments))
-      .then(() => {
-        getAllComments()
-          .then((comments) => setAllComments((prev) => [...prev, ...comments]))
-          .then(() => setLoading(false));
-      });
+    getUserComments().then(() => {
+      getAllComments();
+    });
   };
 
   return (
@@ -80,7 +87,8 @@ const PostCommentModal: FC<PostCommentModalProps> = (props) => {
       animationIn={'slideInUp'}
       animationOut={'slideOutDown'}
       onModalShow={() => {
-        getPostComments();
+        setLoading(true);
+        getPostComments().then(() => setLoading(false));
       }}
       onModalHide={() => {
         setAllComments([]);
@@ -89,36 +97,52 @@ const PostCommentModal: FC<PostCommentModalProps> = (props) => {
       style={{margin: 0}}>
       <Box flex={1} backgroundColor={'bgDark'}>
         <Header onPress={() => setModalVisible(false)} />
-        {newComment.map((comment, index) => (
-          <Comment comment={comment} postId={postId} key={index} />
-        ))}
-        <FlatList
-          data={allComments}
-          keyExtractor={(item, index) => item.id as string}
-          renderItem={({item}) => <Comment comment={item} postId={postId} />}
-          refreshControl={
-            <RefreshControl
-              colors={[theme.colors.cyan]}
-              refreshing={loading}
-              onRefresh={async () => {
-                setLoading(true);
-                setAllComments([]);
-                setNewComment([]);
-                getPostComments();
-                setLoading(false);
-              }}
+        {loading || refreshing ? (
+          <Box flex={1} justifyContent={'center'} alignItems={'center'}>
+            <ActivityIndicator size={'large'} color={theme.colors.cyan} />
+          </Box>
+        ) : (
+          <Box flex={1}>
+            {newComment.map((comment, index) => (
+              <Comment
+                comment={comment}
+                postId={postId}
+                key={comment.id as string}
+              />
+            ))}
+            <FlatList
+              style={{flex: 1}}
+              data={allComments}
+              keyExtractor={(item, index) => item.id as string}
+              renderItem={({item}) => (
+                <Comment comment={item} postId={postId} />
+              )}
+              refreshControl={
+                <RefreshControl
+                  colors={[theme.colors.cyan]}
+                  refreshing={refreshing}
+                  onRefresh={async () => {
+                    setRefreshing(true);
+                    setAllComments([]);
+                    setNewComment([]);
+                    getPostComments().then(() => setRefreshing(false));
+                  }}
+                />
+              }
+              ListEmptyComponent={
+                <Center flex={1} marginTop={'s'}>
+                  <Text color={'textDark'}>No comments yet</Text>
+                </Center>
+              }
             />
-          }
-          ListEmptyComponent={
-            <Center flex={1} marginTop={'s'}>
-              <Text color={'textDark'}>No comments yet</Text>
-            </Center>
-          }
-        />
+          </Box>
+        )}
         <Box
           flexDirection={'row'}
           backgroundColor={'itemBgDark'}
           padding={'sm'}
+          position={'absolute'}
+          bottom={0}
           alignItems={'center'}
           justifyContent={'space-between'}>
           <TextInput
@@ -147,4 +171,4 @@ const PostCommentModal: FC<PostCommentModalProps> = (props) => {
   );
 };
 
-export default PostCommentModal;
+export default memo(PostCommentModal);
