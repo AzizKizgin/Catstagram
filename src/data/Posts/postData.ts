@@ -1,6 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import firestore from '@react-native-firebase/firestore';
+import firestore, {
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 import {useEffect, useState} from 'react';
+interface IGetUserPosts {
+  userId?: string;
+  limit: number;
+  lastDoc?: FirebaseFirestoreTypes.QueryDocumentSnapshot<FirebaseFirestoreTypes.DocumentData>;
+  setLastDoc: (
+    doc: FirebaseFirestoreTypes.QueryDocumentSnapshot<FirebaseFirestoreTypes.DocumentData>,
+  ) => void;
+  setPosts: (posts: Post[] | any) => void;
+  setLoading?: (loading: boolean) => void;
+}
 
 export const addPost = async (
   post: Post,
@@ -38,7 +50,6 @@ export const addPost = async (
         })
         .then(() => {
           AsyncStorage.setItem('refreshFeed', 'true');
-          AsyncStorage.setItem('refreshProfile', 'true');
         });
     });
 };
@@ -149,5 +160,57 @@ export const deletePost = async (postId?: string, userId?: string) => {
           }
         });
       });
+  }
+};
+
+export const getUserPosts = async ({
+  userId,
+  limit,
+  setLastDoc,
+  setPosts,
+}: IGetUserPosts) => {
+  firestore()
+    .collection('posts')
+    .orderBy('createdAt', 'desc')
+    .where('userId', '==', userId)
+    .limit(limit)
+    .onSnapshot((querySnapshot) => {
+      let posts: Post[] = [];
+      querySnapshot.forEach((documentSnapshot) => {
+        posts.push(documentSnapshot.data() as Post);
+      });
+      setPosts(posts);
+      setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
+    });
+};
+
+export const getMoreUserPosts = async ({
+  userId,
+  limit,
+  lastDoc,
+  setLastDoc,
+  setPosts,
+  setLoading,
+}: IGetUserPosts) => {
+  if (lastDoc) {
+    setLoading && setLoading(true);
+    firestore()
+      .collection('posts')
+      .orderBy('createdAt', 'desc')
+      .where('userId', '==', userId)
+      .startAfter(lastDoc)
+      .limit(limit)
+      .get()
+      .then((querySnapshot) => {
+        let newPosts: Post[] = [];
+        querySnapshot.forEach((documentSnapshot) => {
+          newPosts.push(documentSnapshot.data() as Post);
+        });
+        setPosts((prevPosts: Post[]) => [...prevPosts, ...newPosts]);
+        setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
+        setLoading && setLoading(false);
+      });
+  } else {
+    setLoading && setLoading(false);
   }
 };

@@ -1,18 +1,55 @@
-import React, {FC, memo, useState} from 'react';
+import React, {FC, memo, useEffect, useState} from 'react';
 import {Box, Pressable} from 'native-base';
 import {ActivityIndicator, Image} from 'react-native';
 import {FlatList, RefreshControl} from 'react-native-gesture-handler';
 import theme from '../../../../theme';
+import UserPostsModal from './Modal/UserPostsModal';
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import {getMoreUserPosts, getUserPosts} from '../../../data/Posts/postData';
 
 interface UserPostsProps {
-  posts: Post[];
-  getMorePosts: () => void;
-  getPosts: () => Promise<void>;
-  loading: boolean;
+  userId?: string;
+  postCount?: number;
 }
 const UserPosts: FC<UserPostsProps> = (props) => {
-  const {posts, getMorePosts, getPosts, loading} = props;
+  const {userId, postCount} = props;
   const [refreshing, setRefreshing] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<Post>({} as Post);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [lastDoc, setLastDoc] =
+    useState<
+      FirebaseFirestoreTypes.QueryDocumentSnapshot<FirebaseFirestoreTypes.DocumentData>
+    >();
+
+  const getPosts = async () => {
+    getUserPosts({
+      userId: userId,
+      limit: 15,
+      setLastDoc: setLastDoc,
+      setPosts: setPosts,
+    });
+  };
+  const getMorePosts = () => {
+    getMoreUserPosts({
+      userId: userId,
+      limit: 15,
+      lastDoc: lastDoc,
+      setLastDoc: setLastDoc,
+      setPosts: setPosts,
+      setLoading: setLoading,
+    });
+  };
+
+  const onPress = (post: Post) => {
+    setSelectedPost(post);
+    setModalVisible(true);
+  };
+
+  useEffect(() => {
+    getPosts();
+  }, []);
 
   return (
     <>
@@ -23,8 +60,8 @@ const UserPosts: FC<UserPostsProps> = (props) => {
         onEndReached={() => {
           getMorePosts();
         }}
-        renderItem={({item: post, index}) => (
-          <Pressable key={post.id} onPress={() => {}}>
+        renderItem={({item: post}) => (
+          <Pressable key={post.id} onPress={() => onPress(post)}>
             <Box marginTop={'xxs'} marginX={'xxs'}>
               <Image
                 source={{
@@ -55,6 +92,11 @@ const UserPosts: FC<UserPostsProps> = (props) => {
             )}
           </Box>
         }
+      />
+      <UserPostsModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        selectedPost={selectedPost}
       />
     </>
   );
