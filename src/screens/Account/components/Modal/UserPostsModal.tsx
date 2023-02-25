@@ -19,8 +19,6 @@ const UserPostsModal: FC<UserPostsModalProps> = (props) => {
       onBackButtonPress={() => setModalVisible(false)}
       animationIn={'slideInUp'}
       animationOut={'slideOutDown'}
-      onModalShow={() => {}}
-      onModalHide={() => {}}
       style={{margin: 0}}>
       <Box flex={1} backgroundColor={'bgDark'}>
         <Header onPress={() => setModalVisible(false)} />
