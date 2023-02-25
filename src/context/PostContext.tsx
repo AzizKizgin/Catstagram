@@ -14,7 +14,6 @@ interface PostContextType {
   like: () => void;
   likes: string[];
   isUserLiked: boolean;
-  onCommentPress: () => void;
   post: Post | null;
 }
 
@@ -22,7 +21,6 @@ const PostContext = createContext<PostContextType>({
   like: () => {},
   likes: [],
   isUserLiked: false,
-  onCommentPress: () => {},
   post: null,
 });
 
@@ -33,10 +31,6 @@ export const PostProvider = ({children, post}: PostContextProps) => {
   const {user} = useAuth();
   const like = () => {
     likePost(post?.id, user?.uid);
-  };
-
-  const onCommentPress = () => {
-    navigation.navigate('Comments', {postId: post?.id});
   };
 
   getPostLikes(post?.id).then((likes) => {
@@ -50,7 +44,6 @@ export const PostProvider = ({children, post}: PostContextProps) => {
         likes,
         post,
         isUserLiked: likes?.includes(user?.uid || ''),
-        onCommentPress,
       }}>
       {children}
     </PostContext.Provider>

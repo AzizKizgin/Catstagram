@@ -12,7 +12,6 @@ type MainTabParamsList = {
 
 type FeedNavigationParamsList = {
   Feed: undefined;
-  Comments: {postId?: string};
   UserAccount: {userId?: string};
 };
 
