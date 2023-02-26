@@ -43,7 +43,7 @@ const Account = () => {
           <EditProfile userInfo={userInfo} />
         )}
       </Box>
-      <UserPosts postCount={postsCount} userId={userId || user?.uid} />
+      <UserPosts userId={userId || user?.uid} />
     </Box>
   );
 };

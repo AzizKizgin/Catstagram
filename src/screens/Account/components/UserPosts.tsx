@@ -9,10 +9,9 @@ import {getMoreUserPosts, getUserPosts} from '../../../data/Posts/postData';
 
 interface UserPostsProps {
   userId?: string;
-  postCount?: number;
 }
 const UserPosts: FC<UserPostsProps> = (props) => {
-  const {userId, postCount} = props;
+  const {userId} = props;
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post>({} as Post);
