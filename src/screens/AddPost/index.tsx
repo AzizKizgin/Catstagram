@@ -23,7 +23,7 @@ const AddPost = () => {
   useEffect(() => {
     const getImages = async () => {
       const result = await launchImageLibrary({
-        selectionLimit: 0,
+        selectionLimit: 1,
         mediaType: 'photo',
         includeBase64: true,
       });
