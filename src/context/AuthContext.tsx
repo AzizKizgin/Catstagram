@@ -94,7 +94,7 @@ export const AuthProvider = ({children}: AuthContextProps) => {
               id: auth().currentUser?.uid,
               bio: '',
               email: email,
-              username: userName,
+              username: userName.toLowerCase(),
               image: '',
               createdAt: new Date().getTime().toString(),
               deviceToken: deviceToken,
