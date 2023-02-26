@@ -74,7 +74,6 @@ const ActivityButtons: FC<ActivityButtonsProps> = ({userId, userToken}) => {
           justifyContent={'center'}
           borderRadius={10}
           onPress={() => {
-            console.log(appUser?.uid, appUser?.displayName, userId, userToken);
             followUser(
               appUser?.uid,
               appUser?.displayName || '',

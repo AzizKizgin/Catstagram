@@ -182,7 +182,6 @@ export const followUser = async (
           })
           .then(() => {
             if (followDeviceToken) {
-              console.log('first');
               sendNotification(
                 followDeviceToken,
                 'New Fallow',
