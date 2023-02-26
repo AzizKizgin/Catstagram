@@ -5,12 +5,7 @@ import {getPostById} from '../Posts/postData';
 
 export const addUserInfo = async (user: User) => {
   if (user.id) {
-    const userDoc = firestore()
-      .collection('users')
-      .doc(user.id)
-      .collection('info')
-      .doc('info');
-    await userDoc.set(user);
+    const userDoc = firestore().collection('users').doc(user.id).set(user);
   } else {
     console.log('User ID is undefined');
   }
@@ -18,12 +13,7 @@ export const addUserInfo = async (user: User) => {
 
 export const getUserById = async (userId?: string) => {
   if (userId) {
-    const userDoc = await firestore()
-      .collection('users')
-      .doc(userId)
-      .collection('info')
-      .doc('info')
-      .get();
+    const userDoc = await firestore().collection('users').doc(userId).get();
     const user = userDoc.data();
     if (user) {
       let userObj: User = {
@@ -68,11 +58,7 @@ export const updateUserInfo = async (
   userBio?: string,
 ) => {
   if (userId) {
-    const userDoc = firestore()
-      .collection('users')
-      .doc(userId)
-      .collection('info')
-      .doc('info');
+    const userDoc = firestore().collection('users').doc(userId);
     await userDoc.update({
       username: userName,
       bio: userBio,
