@@ -5,3 +5,5 @@ export {default as Register} from './Authentication/Register';
 export {default as ResetPassword} from './Authentication/ResetPassword';
 export {default as Search} from './Search';
 export {default as AddPost} from './AddPost';
+export {default as LikedPosts} from './UserActivities/LikedPostsScreen';
+export {default as SavedPosts} from './UserActivities/SavedPostsScreen';

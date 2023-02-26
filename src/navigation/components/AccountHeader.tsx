@@ -23,7 +23,7 @@ const AccountHeader: FC<AccountHeaderProps> = ({props}) => {
             props.navigation.navigate('AddPost');
           }}
         />
-        <AccountMenuButton />
+        <AccountMenuButton props={props} />
       </HStack>
     </Box>
   );

@@ -25,6 +25,11 @@ type MainNavigationParamsList = {
   AddPost: undefined;
 };
 
+type AccountNavigationParamsList = {
+  Account: undefined;
+  UserActivities: undefined;
+};
+
 type User = {
   id?: string;
   email: string;
