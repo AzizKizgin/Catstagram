@@ -66,11 +66,10 @@ export const updateUserInfo = async (
   }
 };
 
-export const getUserLikedPosts = async (userId?: string) => {
-  const allLikedPosts: Post[] = [];
+export const getUserLikedPostIds = async (userId?: string) => {
+  let allPostIds: string[] = [];
   if (userId) {
-    let allLikedPostsIds: string[] = [];
-    const allLikedPostsDocs = await firestore()
+    await firestore()
       .collection('users')
       .doc(userId)
       .collection('activities')
@@ -78,23 +77,29 @@ export const getUserLikedPosts = async (userId?: string) => {
       .get()
       .then((doc) => {
         if (doc.exists) {
-          allLikedPostsIds = doc.data()?.likes;
+          allPostIds = doc.data()?.likes;
         }
       });
-    if (allLikedPostsIds) {
-      for (let i = 0; i < allLikedPostsIds.length; i++) {
-        const post = await getPostById(allLikedPostsIds[i]);
-        if (post) {
-          allLikedPosts.push(post);
-        }
-      }
-    }
-    allLikedPosts.sort((a, b) => {
-      return Number(b.createdAt) - Number(a.createdAt);
-    });
-    return allLikedPosts;
   }
-  return [];
+  return allPostIds;
+};
+
+export const getUserSavedPostIds = async (userId?: string) => {
+  let allPostIds: string[] = [];
+  if (userId) {
+    await firestore()
+      .collection('users')
+      .doc(userId)
+      .collection('activities')
+      .doc('favorites')
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          allPostIds = doc.data()?.favorites;
+        }
+      });
+  }
+  return allPostIds;
 };
 
 export const followUser = async (

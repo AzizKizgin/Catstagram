@@ -214,3 +214,71 @@ export const getMoreUserPosts = async ({
     setLoading && setLoading(false);
   }
 };
+
+export const favoritePost = async (postId?: string, userId?: string) => {
+  if (postId && userId) {
+    firestore()
+      .collection('users')
+      .doc(userId)
+      .collection('activities')
+      .doc('favorites')
+      .get()
+      .then(async (doc) => {
+        if (doc.exists) {
+          await firestore()
+            .collection('users')
+            .doc(userId)
+            .collection('activities')
+            .doc('favorites')
+            .get()
+            .then(async (doc) => {
+              const isFavorited = doc.data()?.favorites?.includes(postId);
+              if (!isFavorited) {
+                await firestore()
+                  .collection('users')
+                  .doc(userId)
+                  .collection('activities')
+                  .doc('favorites')
+                  .update({
+                    favorites: firestore.FieldValue.arrayUnion(postId),
+                  });
+              } else if (isFavorited) {
+                await firestore()
+                  .collection('users')
+                  .doc(userId)
+                  .collection('activities')
+                  .doc('favorites')
+                  .update({
+                    favorites: firestore.FieldValue.arrayRemove(postId),
+                  });
+              }
+            });
+        } else {
+          await firestore()
+            .collection('users')
+            .doc(userId)
+            .collection('activities')
+            .doc('favorites')
+            .set({
+              favorites: firestore.FieldValue.arrayUnion(postId),
+            });
+        }
+      });
+  }
+};
+
+export const isPostFavorited = async (postId?: string, userId?: string) => {
+  const [isFavorited, setIsFavorited] = useState(false);
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('users')
+      .doc(userId)
+      .collection('activities')
+      .doc('favorites')
+      .onSnapshot((documentSnapshot) => {
+        setIsFavorited(documentSnapshot.data()?.favorites?.includes(postId));
+      });
+    return () => subscriber();
+  }, []);
+  return isFavorited;
+};

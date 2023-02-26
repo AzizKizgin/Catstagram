@@ -2,7 +2,7 @@ import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {createContext, ReactNode, useContext, useEffect, useState} from 'react';
-import {getPostLikes, likePost} from '../data/Posts/postData';
+import {favoritePost, getPostLikes, likePost} from '../data/Posts/postData';
 import {useAuth} from './AuthContext';
 
 interface PostContextProps {
@@ -15,6 +15,7 @@ interface PostContextType {
   likes: string[];
   isUserLiked: boolean;
   post: Post | null;
+  favorite: () => void;
 }
 
 const PostContext = createContext<PostContextType>({
@@ -22,6 +23,7 @@ const PostContext = createContext<PostContextType>({
   likes: [],
   isUserLiked: false,
   post: null,
+  favorite: () => {},
 });
 
 export const PostProvider = ({children, post}: PostContextProps) => {
@@ -37,6 +39,10 @@ export const PostProvider = ({children, post}: PostContextProps) => {
     setLikes(likes);
   });
 
+  const favorite = () => {
+    favoritePost(post?.id, user?.uid);
+  };
+
   return (
     <PostContext.Provider
       value={{
@@ -44,6 +50,7 @@ export const PostProvider = ({children, post}: PostContextProps) => {
         likes,
         post,
         isUserLiked: likes?.includes(user?.uid || ''),
+        favorite,
       }}>
       {children}
     </PostContext.Provider>
