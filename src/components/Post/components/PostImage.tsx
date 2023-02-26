@@ -56,7 +56,7 @@ const PostImage: FC<Props> = ({image}) => {
             resizeMode={'cover'}
           />
           <AnimatedCenter position="absolute" style={scaleStyle}>
-            <Icon as={AntDesign} name="like1" size={125} color="iconColor" />
+            <Icon as={AntDesign} name="like1" size={125} color="cyan" />
           </AnimatedCenter>
         </AnimatedBox>
       </TapGestureHandler>
