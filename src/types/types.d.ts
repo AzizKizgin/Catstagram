@@ -15,6 +15,11 @@ type FeedNavigationParamsList = {
   UserAccount: {userId?: string};
 };
 
+type SearchNavigationParamsList = {
+  Search: undefined;
+  UserAccount: {userId?: string};
+};
+
 type MainNavigationParamsList = {
   MainTab: undefined;
   AddPost: undefined;
