@@ -35,7 +35,7 @@ const Account = () => {
     <Box flex={1} backgroundColor={'bgDark'}>
       {userId && userId !== user?.uid && <Header />}
       <Box paddingX={'m'}>
-        <AccountTop userId={userId || user?.uid} postCount={postsCount} />
+        <AccountTop userInfo={userInfo} postCount={postsCount} />
         <AccountInfo userInfo={userInfo} />
         {userId && userId !== user?.uid ? (
           <ActivityButtons userId={userId} userToken={userInfo?.deviceToken} />

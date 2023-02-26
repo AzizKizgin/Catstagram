@@ -41,7 +41,7 @@ const Comment: FC<CommentProps> = (props) => {
       space={'4'}>
       <HStack space={'4'} alignItems={'center'} flex={1}>
         <UserImage
-          image={defaultProfileImage}
+          image={comment.userImage}
           size={'small'}
           userId={comment.userId}
         />

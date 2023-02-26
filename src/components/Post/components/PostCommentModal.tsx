@@ -161,6 +161,7 @@ const PostCommentModal: FC<PostCommentModalProps> = (props) => {
                 username: user?.displayName as string,
                 id: '',
                 likes: [],
+                userImage: user?.photoURL as string,
               };
               setNewComment((prev) => [newComment, ...prev]);
             }}

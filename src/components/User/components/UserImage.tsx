@@ -9,8 +9,9 @@ interface UserImageProps {
   image?: string | null;
   size: 'small' | 'medium' | 'large';
   userId?: string;
+  setImage?: () => void;
 }
-const UserImage: FC<UserImageProps> = ({image, size, userId}) => {
+const UserImage: FC<UserImageProps> = ({image, size, userId, setImage}) => {
   let imageSize = 35;
   switch (size) {
     case 'small':
@@ -31,7 +32,7 @@ const UserImage: FC<UserImageProps> = ({image, size, userId}) => {
     }
   };
   return (
-    <Pressable onPress={onPress}>
+    <Pressable onPress={setImage || onPress}>
       <Center>
         <Image
           source={{
@@ -40,6 +41,7 @@ const UserImage: FC<UserImageProps> = ({image, size, userId}) => {
           style={{
             width: imageSize,
             height: imageSize,
+            borderRadius: imageSize / 2,
           }}
         />
       </Center>

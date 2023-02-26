@@ -6,14 +6,16 @@ export const addComment = async (
   comment?: string,
   userId?: string,
   username?: string | null,
+  userImage?: string | null,
 ) => {
-  if (postId && comment && userId && username) {
+  if (postId && comment && userId && username && userImage) {
     const commentObj: Comment = {
       username: username,
       text: comment,
       createdAt: new Date().getTime().toString(),
       userId: userId,
       likes: [],
+      userImage: userImage,
     };
 
     const commentDoc = await firestore()

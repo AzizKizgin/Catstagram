@@ -4,19 +4,19 @@ import UserImage from '../../../components/User/components/UserImage';
 import {getUserFallowers, getUserFallowing} from '../../../data/Users/userData';
 
 interface AccountTopProps {
-  userId?: string;
+  userInfo?: User | null;
   postCount?: number;
 }
 const AccountTop: FC<AccountTopProps> = (props) => {
   const [userFallowers, setUserFallowers] = useState<User[]>([]);
   const [userFallowing, setUserFallowing] = useState<User[]>([]);
-  const {postCount = 0, userId} = props;
+  const {postCount = 0, userInfo} = props;
 
   useEffect(() => {
-    getUserFallowers(userId).then((users) => {
+    getUserFallowers(userInfo?.id).then((users) => {
       setUserFallowers(users);
     });
-    getUserFallowing(userId).then((users) => {
+    getUserFallowing(userInfo?.id).then((users) => {
       setUserFallowing(users);
     });
   }, []);
@@ -26,7 +26,7 @@ const AccountTop: FC<AccountTopProps> = (props) => {
       alignItems={'center'}
       space={8}
       paddingTop={'l'}>
-      <UserImage size={'medium'} />
+      <UserImage size={'medium'} image={userInfo?.image} />
       <Center>
         <Text color={'textDark'} fontSize={'lg'} fontWeight={'bold'}>
           {postCount}

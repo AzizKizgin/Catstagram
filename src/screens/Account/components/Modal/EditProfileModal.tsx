@@ -7,6 +7,7 @@ import {updateUserInfo} from '../../../../data/Users/userData';
 import {useAuth} from '../../../../context/AuthContext';
 import Header from '../../../../components/Shared/Header';
 import {useToast} from '../../../../context/ToastContext';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 interface EditProfileModalProps {
   userInfo?: User | null;
@@ -17,6 +18,7 @@ const EditProfileModal: FC<EditProfileModalProps> = (props) => {
   const {userInfo, modalVisible, setModalVisible} = props;
   const [userName, setUserName] = useState(userInfo?.username || '');
   const [bio, setBio] = useState(userInfo?.bio || '');
+  const [image, setImage] = useState<string>();
   const {user} = useAuth();
   const {showToast} = useToast();
   useEffect(() => {
@@ -24,12 +26,33 @@ const EditProfileModal: FC<EditProfileModalProps> = (props) => {
     setBio(userInfo?.bio || '');
   }, [modalVisible]);
 
+  const getImage = async () => {
+    const result = await launchImageLibrary({
+      selectionLimit: 1,
+      mediaType: 'photo',
+      includeBase64: true,
+    });
+    if (result && result.assets && result.assets[0].base64) {
+      setImage(result.assets[0].base64.toString() || '');
+    }
+  };
+
   const saveChanges = () => {
-    if (userName !== '' && userName !== userInfo?.username) {
-      updateUserInfo(userInfo?.id, userName, bio);
-      user?.updateProfile({
-        displayName: userName,
-      });
+    if (
+      userName !== '' &&
+      (userName !== userInfo?.username || bio !== userInfo?.bio || image)
+    ) {
+      updateUserInfo(userInfo?.id, userName, bio, image);
+      if (userName !== '') {
+        user?.updateProfile({
+          displayName: userName,
+        });
+      }
+      if (image) {
+        user?.updateProfile({
+          photoURL: image,
+        });
+      }
       setModalVisible(false);
       showToast(
         'Profile updated successfully. Changes will be reflected when you re-enter the app',
@@ -50,7 +73,11 @@ const EditProfileModal: FC<EditProfileModalProps> = (props) => {
       <Box flex={1} backgroundColor={'bgDark'} padding={'sm'}>
         <Header onPress={() => setModalVisible(false)} />
         <Box marginTop={'xxl'}>
-          <UserImage size={'large'} image={userInfo?.image} />
+          <UserImage
+            size={'large'}
+            image={image || userInfo?.image}
+            setImage={getImage}
+          />
           <Box
             flexDirection={'row'}
             padding={'sm'}

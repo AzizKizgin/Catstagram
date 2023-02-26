@@ -47,6 +47,7 @@ type Comment = {
   text: string;
   createdAt: string;
   likes?: string[];
+  userImage: string;
 };
 
 type Post = {

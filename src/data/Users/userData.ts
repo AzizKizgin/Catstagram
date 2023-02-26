@@ -56,12 +56,14 @@ export const updateUserInfo = async (
   userId?: string,
   userName?: string,
   userBio?: string,
+  image?: string,
 ) => {
   if (userId) {
     const userDoc = firestore().collection('users').doc(userId);
     await userDoc.update({
       username: userName,
       bio: userBio,
+      image: image,
     });
   }
 };
