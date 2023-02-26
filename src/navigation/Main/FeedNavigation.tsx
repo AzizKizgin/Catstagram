@@ -12,9 +12,7 @@ const FeedNavigation = () => {
         animation: 'fade_from_bottom',
         headerShown: true,
         header(props) {
-          if (props.route.name === 'AddPost') {
-            return <AddPostHeader props={props} />;
-          } else if (props.route.name === 'Feed') {
+          if (props.route.name === 'Feed') {
             return <FeedHeader props={props} />;
           } else {
             return null;
