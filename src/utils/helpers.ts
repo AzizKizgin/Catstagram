@@ -1,6 +1,8 @@
 import axios from 'axios';
 import {useState} from 'react';
+import {ImageBackground} from 'react-native';
 import {Dimensions, Image} from 'react-native';
+import RNFetchBlob from 'rn-fetch-blob';
 import theme from '../../theme';
 
 export const getImageHeight = (image: string) => {
@@ -88,4 +90,15 @@ export const sendNotification = async (
     .catch((err) => {
       console.log(err);
     });
+};
+
+export const downloadImage = async (image?: string) => {
+  if (!image) return;
+
+  const dirs = RNFetchBlob.fs.dirs;
+  const date = new Date();
+  const fileName = `${date.getTime() + 'catstagram'}.jpg`;
+  var path = dirs.DownloadDir + '/' + fileName;
+
+  RNFetchBlob.fs.writeFile(path, image, 'base64');
 };

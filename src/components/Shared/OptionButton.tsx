@@ -4,12 +4,15 @@ import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useAuth} from '../../context/AuthContext';
 import {usePost} from '../../context/PostContext';
+import {useToast} from '../../context/ToastContext';
 import {deletePost} from '../../data/Posts/postData';
+import {downloadImage} from '../../utils/helpers';
 
 const OptionButton = () => {
   const {user} = useAuth();
   const {post} = usePost();
   const route = useRoute();
+  const {showToast} = useToast();
   return (
     <Box alignItems="center">
       <Menu
@@ -31,7 +34,11 @@ const OptionButton = () => {
         }}>
         <Menu.Item
           _text={{color: 'textDark', fontSize: 'sm'}}
-          onPress={() => {}}>
+          onPress={() => {
+            downloadImage(post?.image.imageUri).then(() => {
+              showToast('Image has been downloaded to your gallery', 'success');
+            });
+          }}>
           Download Image
         </Menu.Item>
         <Menu.Item

@@ -2,9 +2,9 @@ import React, {FC, memo} from 'react';
 import {HStack, VStack, Text} from 'native-base';
 import PostLikeButton from '../../Shared/PostLikeButton';
 import CommentButton from '../../Shared/CommentButton';
-import ShareButton from '../../Shared/ShareButton';
 import SaveButton from '../../Shared/SaveButton';
 import {usePost} from '../../../context/PostContext';
+import DownloadButton from '../../Shared/DownloadButton';
 
 interface PostActionsProps {
   isDetail?: boolean;
@@ -17,7 +17,7 @@ const PostActions: FC<PostActionsProps> = ({isDetail = false}) => {
         <HStack space={'sm'}>
           <PostLikeButton />
           {!isDetail && <CommentButton />}
-          <ShareButton />
+          <DownloadButton />
         </HStack>
         <SaveButton />
       </HStack>
