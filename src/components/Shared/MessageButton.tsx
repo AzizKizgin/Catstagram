@@ -1,11 +1,16 @@
-import {Box, Icon} from 'native-base';
+import {Box, Icon, Pressable} from 'native-base';
 import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/Ionicons';
-import AnimatedPressable from '../AnimatedComponents/AnimatedPressable';
+import {useToast} from '../../context/ToastContext';
 
 const MessageButton = () => {
+  const {showToast} = useToast();
   return (
-    <AnimatedPressable padding={'xs'}>
+    <Pressable
+      padding={'xs'}
+      onPress={() => {
+        showToast('This feature is not available yet', 'info');
+      }}>
       <Box>
         <Icon
           as={MaterialCommunityIcons}
@@ -14,7 +19,7 @@ const MessageButton = () => {
           color="iconColor"
         />
       </Box>
-    </AnimatedPressable>
+    </Pressable>
   );
 };
 
