@@ -12,7 +12,7 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import Logo from '../../components/Shared/Logo';
 const Login = () => {
   const {login, user} = useAuth();
-  const [errors, setErrors] = useState<any>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const navigation = useNavigation<NavigationProp<AuthNavigationParamsList>>();
   return (
     <Box
@@ -27,7 +27,6 @@ const Login = () => {
           login({
             email: values.email,
             password: values.password,
-            setErrors,
           })
         }>
         {({handleChange, handleBlur, handleSubmit, values, errors}) => (
@@ -40,6 +39,7 @@ const Login = () => {
               placeholder={'Email'}
               error={errors.email}
               iconName={inputIcons.email}
+              isSubmitted={isSubmitted}
             />
             <FormInput
               onChangeText={handleChange('password')}
@@ -48,10 +48,14 @@ const Login = () => {
               placeholder={'Password'}
               error={errors.password}
               iconName={inputIcons.password}
+              isSubmitted={isSubmitted}
             />
             <VStack space={'xs'}>
               <Button
-                onPress={() => handleSubmit()}
+                onPress={() => {
+                  handleSubmit();
+                  setIsSubmitted(true);
+                }}
                 backgroundColor={'cyan'}
                 marginTop={'sm'}>
                 Login

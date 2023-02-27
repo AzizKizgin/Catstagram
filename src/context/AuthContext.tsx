@@ -11,7 +11,6 @@ interface AuthContextProps {
 interface LoginProps {
   email: string;
   password: string;
-  setErrors: (errors: any) => void;
 }
 
 interface RegisterProps extends LoginProps {
@@ -20,15 +19,14 @@ interface RegisterProps extends LoginProps {
 
 interface ResetPasswordProps {
   email: string;
-  setErrors: (errors: any) => void;
 }
 
 interface AuthContextType {
   user: FirebaseAuthTypes.User | null;
-  login: ({email, password, setErrors}: LoginProps) => void;
+  login: ({email, password}: LoginProps) => void;
   logout: () => void;
-  register: ({email, password, userName, setErrors}: RegisterProps) => void;
-  resetPassword: ({email, setErrors}: ResetPasswordProps) => void;
+  register: ({email, password, userName}: RegisterProps) => void;
+  resetPassword: ({email}: ResetPasswordProps) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -51,13 +49,13 @@ export const AuthProvider = ({children}: AuthContextProps) => {
     getUser();
   }, []);
 
-  const login = async ({email, password, setErrors}: LoginProps) => {
+  const login = async ({email, password}: LoginProps) => {
     try {
       const response = await auth().signInWithEmailAndPassword(email, password);
       const user = response.user;
       setUser(user);
     } catch (error) {
-      setErrors(error);
+      console.log(error);
     }
   };
 
@@ -71,12 +69,7 @@ export const AuthProvider = ({children}: AuthContextProps) => {
     }
   };
 
-  const register = async ({
-    email,
-    password,
-    userName,
-    setErrors,
-  }: RegisterProps) => {
+  const register = async ({email, password, userName}: RegisterProps) => {
     try {
       await auth()
         .createUserWithEmailAndPassword(email, password)
@@ -101,16 +94,23 @@ export const AuthProvider = ({children}: AuthContextProps) => {
             });
           }
         });
-    } catch (error) {
-      setErrors(error);
+    } catch (error: any) {
+      Alert.alert('Error', error.message);
     }
   };
 
-  const resetPassword = async ({email, setErrors}: ResetPasswordProps) => {
+  const resetPassword = async ({email}: ResetPasswordProps) => {
     try {
-      await auth().sendPasswordResetEmail(email);
+      await auth()
+        .sendPasswordResetEmail(email)
+        .then(() => {
+          Alert.alert('Success', 'Password reset email sent');
+        })
+        .catch((error) => {
+          Alert.alert('Error', error.message);
+        });
     } catch (error) {
-      setErrors(error);
+      console.log(error);
     }
   };
 

@@ -12,7 +12,7 @@ import Logo from '../../components/Shared/Logo';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 const Register = () => {
   const {register} = useAuth();
-  const [error, setError] = useState<any>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const navigation = useNavigation<NavigationProp<AuthNavigationParamsList>>();
 
   return (
@@ -29,7 +29,6 @@ const Register = () => {
             email: values.email,
             password: values.password,
             userName: values.username,
-            setErrors: setError,
           });
           navigation.navigate('Login');
         }}>
@@ -50,6 +49,7 @@ const Register = () => {
               placeholder={'Username'}
               error={errors.username}
               iconName={inputIcons.username}
+              isSubmitted={isSubmitted}
             />
             <FormInput
               onChangeText={handleChange('email')}
@@ -58,6 +58,7 @@ const Register = () => {
               placeholder={'Email'}
               error={errors.email}
               iconName={inputIcons.email}
+              isSubmitted={isSubmitted}
             />
             <FormInput
               onChangeText={handleChange('password')}
@@ -66,6 +67,7 @@ const Register = () => {
               placeholder={'Password'}
               error={errors.password}
               iconName={inputIcons.password}
+              isSubmitted={isSubmitted}
             />
             <FormInput
               onChangeText={handleChange('confirmPassword')}
@@ -74,9 +76,13 @@ const Register = () => {
               placeholder={'Confirm Password'}
               error={errors.confirmPassword}
               iconName={inputIcons.confirmPassword}
+              isSubmitted={isSubmitted}
             />
             <Button
-              onPress={() => handleSubmit()}
+              onPress={() => {
+                handleSubmit();
+                setIsSubmitted(true);
+              }}
               isDisabled={isSubmitting}
               backgroundColor={'cyan'}
               marginTop={'sm'}>

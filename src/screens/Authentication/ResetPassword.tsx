@@ -11,7 +11,7 @@ import {
 
 const ResetPassword = () => {
   const {resetPassword} = useAuth();
-  const [errors, setErrors] = useState<any>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   return (
     <Box
       flex={1}
@@ -24,7 +24,6 @@ const ResetPassword = () => {
         onSubmit={(values) =>
           resetPassword({
             email: values.email,
-            setErrors,
           })
         }>
         {({handleChange, handleBlur, handleSubmit, values, errors}) => (
@@ -37,9 +36,13 @@ const ResetPassword = () => {
               placeholder={'Email'}
               error={errors.email}
               iconName={inputIcons.email}
+              isSubmitted={isSubmitted}
             />
             <Button
-              onPress={() => handleSubmit()}
+              onPress={() => {
+                setIsSubmitted(true);
+                handleSubmit();
+              }}
               backgroundColor={'cyan'}
               marginTop={'sm'}>
               Send
