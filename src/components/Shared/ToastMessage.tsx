@@ -44,7 +44,7 @@ const ToastMessage: FC<ToastMessageProps> = (props) => {
 
   useEffect(() => {
     if (showToast) {
-      bottom.value = withTiming(5, {duration: 500}, (isFinished) => {
+      bottom.value = withTiming(15, {duration: 500}, (isFinished) => {
         if (isFinished) {
           bottom.value = withDelay(2000, withTiming(-100, {duration: 500}));
         }
@@ -59,7 +59,7 @@ const ToastMessage: FC<ToastMessageProps> = (props) => {
       left={5}
       right={5}
       backgroundColor={toastColor}
-      padding={'sm'}
+      padding={'m'}
       alignItems={'center'}
       justifyContent={'center'}
       zIndex={999}
