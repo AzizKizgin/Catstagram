@@ -35,7 +35,7 @@ const MainTab = () => {
               break;
           }
           if (route.name === 'Profile') {
-            return <AccountImage focused={focused} image={user?.photoURL} />;
+            return <AccountImage focused={focused} />;
           }
           return (
             <Icon

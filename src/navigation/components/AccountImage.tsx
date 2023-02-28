@@ -1,19 +1,27 @@
 import {Center} from 'native-base';
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {Image} from 'react-native';
 import theme from '../../../theme';
+import {useAuth} from '../../context/AuthContext';
+import {getUserById} from '../../data/Users/userData';
 import {defaultProfileImage} from '../../utils/consts';
 
 interface UserImageProps {
-  image?: string | null;
   focused: boolean;
 }
-const AccountImage: FC<UserImageProps> = ({image, focused}) => {
+const AccountImage: FC<UserImageProps> = ({focused}) => {
+  const {user} = useAuth();
+  const [userPicture, setUserPicture] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    getUserById(user?.uid || '').then((user) => {
+      setUserPicture(user?.image);
+    });
+  }, []);
   return (
     <Center>
       <Image
         source={{
-          uri: `data:image/jpeg;base64,${image || defaultProfileImage}`,
+          uri: `data:image/jpeg;base64,${userPicture || defaultProfileImage}`,
         }}
         style={{
           width: 35,

@@ -48,11 +48,6 @@ const EditProfileModal: FC<EditProfileModalProps> = (props) => {
           displayName: userName,
         });
       }
-      if (image) {
-        user?.updateProfile({
-          photoURL: image,
-        });
-      }
       setModalVisible(false);
       showToast(
         'Profile updated successfully. Changes will be reflected when you re-enter the app',
