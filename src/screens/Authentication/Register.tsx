@@ -12,8 +12,9 @@ import Logo from '../../components/Shared/Logo';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import PrivacyModal from './components/PrivacyModal';
 import TermsModal from './components/TermsModal';
-import CheckBox from '@react-native-community/checkbox';
 import {Alert} from 'react-native';
+import {CheckBox} from '@aziz_kizgin/react-native-checkbox';
+import theme from '../../../theme';
 const Register = () => {
   const {register} = useAuth();
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -31,16 +32,12 @@ const Register = () => {
         initialValues={registerForm}
         validate={registerValidate}
         onSubmit={(values, errors) => {
-          if (isAgreed) {
-            register({
-              email: values.email,
-              password: values.password,
-              userName: values.username,
-            });
-            navigation.navigate('Login');
-          } else {
-            Alert.alert('Please agree to the terms and conditions');
-          }
+          register({
+            email: values.email,
+            password: values.password,
+            userName: values.username,
+          });
+          navigation.navigate('Login');
         }}>
         {({
           handleChange,
@@ -90,10 +87,10 @@ const Register = () => {
             />
             <HStack alignItems={'center'} justifyContent={'center'} space={1}>
               <CheckBox
-                disabled={false}
-                value={isAgreed}
-                onValueChange={setIsAgreed}
-                key={'checkbox'}
+                isChecked={isAgreed}
+                onChange={() => setIsAgreed(!isAgreed)}
+                customColor={theme.colors.cyan}
+                size={16}
               />
               <Text color={'textDark'} fontSize={'sm'}>
                 By registering, you agree to our{' '}
@@ -110,8 +107,12 @@ const Register = () => {
             </HStack>
             <Button
               onPress={() => {
-                handleSubmit();
-                setIsSubmitted(true);
+                if (isAgreed) {
+                  handleSubmit();
+                  setIsSubmitted(true);
+                } else {
+                  Alert.alert('Please agree to the terms and conditions');
+                }
               }}
               isDisabled={isAgreed && isSubmitting}
               backgroundColor={'cyan'}
